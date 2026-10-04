@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>アレクサンドリア</title>
+</head>
+<body>
+    <h1>準備中</h1>
+
+    <script>
+        let db;
+        const dbName = "AlexandriaDB";
+
+        const request = indexedDB.open(dbName, 1);
+
+        request.onupgradeneeded = (e) => {
+            db = e.target.result;
+            const store = db.createObjectStore('logs', { autoIncrement: true });
+            store.createIndex('by_time', 'time', { unique: false });
+            store.createIndex('by_label', 'label', { unique: false });
+        };
+
+        request.onsuccess = (e) => {
+            db = e.target.result;
+            console.log("データベース、準備完了です");
+        };
+
+        request.onerror = (e) => {
+            console.error("データベースを開けませんでした", e);
+        };
+    </script>
