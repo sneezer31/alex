@@ -1,33 +1,424 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <title>アレクサンドリア</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アレクサンドリア</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f4f4f5; color: #333; font-size: 15px; }
+header { background: #2c3e50; color: #fff; padding: 12px 14px; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; font-weight: bold; }
+header .ver { font-size: 11px; font-weight: normal; opacity: .7; }
+header #stat { font-size: 12px; font-weight: normal; opacity: .85; margin-left: auto; }
+nav { display: flex; background: #34495e; }
+nav button { flex: 1; padding: 12px; border: none; background: none; color: #bdc3c7; font-size: 15px; font-weight: bold; }
+nav button.on { color: #fff; background: #2980b9; }
+.tab { padding: 12px; max-width: 900px; margin: 0 auto; }
+.hidden { display: none; }
+.row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+input[type=search], input[type=text], select, textarea { padding: 10px; border: 1px solid #95a5a6; border-radius: 5px; font-size: 15px; background: #fff; }
+input[type=search] { flex: 1; min-width: 160px; }
+textarea { width: 100%; height: 160px; margin: 8px 0; }
+button.act { padding: 10px 16px; border: none; border-radius: 5px; background: #2980b9; color: #fff; font-size: 14px; font-weight: bold; }
+button.act.gray { background: #7f8c8d; }
+button.act.danger { background: #c0392b; }
+button:disabled { opacity: .4; }
+#hitcount { margin: 6px 0; font-size: 13px; color: #555; }
+.hit { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer; }
+.meta { font-size: 12px; color: #777; margin-bottom: 4px; }
+.snip, .body { white-space: pre-wrap; line-height: 1.6; word-break: break-all; }
+mark { background: #ffe58f; padding: 0 1px; }
+.ctx { margin-top: 10px; border-top: 2px solid #2980b9; padding-top: 8px; cursor: default; }
+.msg { padding: 8px; margin: 6px 0; border-radius: 5px; background: #f7f9fb; border-left: 4px solid #dfe4ea; }
+.msg.cur { background: #fff8e1; border-left-color: #f39c12; }
+.srcrow { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; gap: 10px; align-items: center; }
+.srcrow .info { flex: 1; font-size: 13px; line-height: 1.5; word-break: break-all; }
+pre#log { background: #2c3e50; color: #ecf0f1; padding: 10px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap; font-size: 12px; min-height: 40px; }
+p.note { font-size: 13px; color: #555; margin: 8px 0; line-height: 1.6; }
+</style>
 </head>
 <body>
-    <h1>準備中</h1>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
-    
-    <script>
-      
-        let db;
-        const dbName = "AlexandriaDB";
+<header><span>アレクサンドリア</span><span class="ver">版 20261018-1</span><span id="stat"></span></header>
+<nav>
+  <button data-tab="search" class="on">検索</button>
+  <button data-tab="import">取り込み</button>
+  <button data-tab="manage">管理</button>
+</nav>
 
-        const request = indexedDB.open(dbName, 1);
+<section id="tab-search" class="tab">
+  <div class="row">
+    <input id="q" type="search" placeholder="語（空白区切りでAND）">
+    <button id="go" class="act">検索</button>
+  </div>
+  <div class="row">
+    <select id="f-src"><option value="">全ソース</option></select>
+    <select id="f-snd"><option value="">全発言者</option></select>
+    <label><input type="checkbox" id="desc"> 新しい順</label>
+  </div>
+  <div id="hitcount"></div>
+  <div id="results"></div>
+</section>
 
-        request.onupgradeneeded = (e) => {
-            db = e.target.result;
-            const store = db.createObjectStore('logs', { autoIncrement: true });
-            store.createIndex('by_time', 'time', { unique: false });
-            store.createIndex('by_label', 'label', { unique: false });
+<section id="tab-import" class="tab hidden">
+  <p class="note">.json（船の搬出・このアプリのバックアップ）と、.txt（【日時】 発言者： の形のコピー）を読み取ります。複数選択できます。同じ名前のファイルは、そのソースを置き換えます。</p>
+  <input type="file" id="files" multiple>
+  <hr style="margin:16px 0">
+  <input type="text" id="paste-name" placeholder="ソース名（空なら自動）" style="width:100%">
+  <textarea id="paste-text" placeholder="ここに貼り付け"></textarea>
+  <button id="paste-go" class="act">貼り付けを取り込む</button>
+  <pre id="log"></pre>
+</section>
+
+<section id="tab-manage" class="tab hidden">
+  <div id="srclist"></div>
+  <div class="row" style="margin-top:12px">
+    <button id="export" class="act">全件をJSONで書き出し</button>
+    <button id="clear" class="act danger">全消去</button>
+  </div>
+  <p class="note">復元は、取り込みタブでバックアップJSONを選びます。正本はログファイルです。ここは検索用の写しです。</p>
+</section>
+
+<script>
+(function () {
+"use strict";
+var VERSION = "20261018-1";
+var DB_NAME = "alexandria", STORE = "msgs";
+var LIMIT = 200;
+var db = null, all = [], bySrc = {};
+
+function $(id) { return document.getElementById(id); }
+function log(s) { $("log").textContent += s + "\n"; }
+function btn(label, fn, cls) {
+  var b = document.createElement("button");
+  b.className = "act " + (cls || "gray"); b.textContent = label; b.onclick = fn; return b;
+}
+function stamp() {
+  var d = new Date();
+  function p(n) { return ("0" + n).slice(-2); }
+  return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + p(d.getHours()) + p(d.getMinutes());
+}
+function downloadText(name, content, mime) {
+  var url = URL.createObjectURL(new Blob([content], { type: mime || "text/plain;charset=utf-8" }));
+  var a = document.createElement("a");
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+}
+
+/* ---------- IndexedDB ---------- */
+function openDB() {
+  return new Promise(function (res, rej) {
+    var r = indexedDB.open(DB_NAME, 1);
+    r.onupgradeneeded = function () {
+      var s = r.result.createObjectStore(STORE, { keyPath: "id", autoIncrement: true });
+      s.createIndex("src", "src", { unique: false });
+    };
+    r.onsuccess = function () { res(r.result); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+function loadAll() {
+  return new Promise(function (res, rej) {
+    var r = db.transaction(STORE, "readonly").objectStore(STORE).getAll();
+    r.onsuccess = function () { res(r.result); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+function replaceSource(src, recs) {
+  return new Promise(function (res, rej) {
+    var t = db.transaction(STORE, "readwrite"), st = t.objectStore(STORE);
+    var kr = st.index("src").getAllKeys(IDBKeyRange.only(src));
+    kr.onsuccess = function () {
+      kr.result.forEach(function (k) { st.delete(k); });
+      recs.forEach(function (r) { st.add(r); });
+    };
+    t.oncomplete = function () { res(); };
+    t.onerror = t.onabort = function () { rej(t.error || new Error("保存に失敗")); };
+  });
+}
+function clearAll() {
+  return new Promise(function (res, rej) {
+    var t = db.transaction(STORE, "readwrite");
+    t.objectStore(STORE).clear();
+    t.oncomplete = function () { res(); };
+    t.onerror = t.onabort = function () { rej(t.error); };
+  });
+}
+function rebuild(list) {
+  all = list; bySrc = {};
+  all.forEach(function (r) {
+    r._l = r.text.toLowerCase();
+    (bySrc[r.src] = bySrc[r.src] || []).push(r);
+  });
+  Object.keys(bySrc).forEach(function (s) {
+    bySrc[s].sort(function (a, b) { return a.seq - b.seq; });
+    bySrc[s].forEach(function (r, i) { r._pos = i; });
+  });
+}
+function refresh() {
+  return loadAll().then(function (list) { rebuild(list); refreshUI(); });
+}
+
+/* ---------- 読み取り ---------- */
+var HEAD = /^【([^】]+)】\s*([^：:\n]{1,40}?)\s*[：:]\s*$/;
+function parseText(text) {
+  var lines = String(text).replace(/\r\n?/g, "\n").split("\n");
+  var items = [], cur = null, skipped = 0;
+  lines.forEach(function (ln) {
+    var m = ln.match(HEAD);
+    if (m) {
+      if (cur) items.push(cur);
+      cur = { time: m[1].trim(), sender: m[2].trim(), lines: [] };
+    } else if (cur) {
+      cur.lines.push(ln);
+    } else if (ln.trim() !== "") {
+      skipped++;
+    }
+  });
+  if (cur) items.push(cur);
+  items.forEach(function (it) {
+    var ls = it.lines;
+    while (ls.length && ls[ls.length - 1].trim() === "") ls.pop();
+    if (ls.length && /^\s*-{3,}\s*$/.test(ls[ls.length - 1])) {
+      ls.pop();
+      while (ls.length && ls[ls.length - 1].trim() === "") ls.pop();
+    }
+    while (ls.length && ls[0].trim() === "") ls.shift();
+    it.text = ls.join("\n");
+    delete it.lines;
+  });
+  return { items: items, skipped: skipped };
+}
+function timeKey(s) {
+  var m = String(s || "").match(/(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})\D+(\d{1,2}):(\d{2})/);
+  if (!m) return null;
+  return (+m[1]) * 1e8 + (+m[2]) * 1e6 + (+m[3]) * 1e4 + (+m[4]) * 100 + (+m[5]);
+}
+function parseAny(text) {
+  var t = String(text).replace(/^\uFEFF/, "").trim();
+  if (t[0] === "[" || t[0] === "{") {
+    try {
+      var o = JSON.parse(t);
+      if (Array.isArray(o)) {
+        return {
+          kind: "ship", skipped: 0,
+          items: o.filter(function (x) { return x && typeof x.text === "string"; })
+                  .map(function (x) { return { sender: String(x.sender || "?"), time: String(x.time || ""), text: x.text }; })
         };
+      }
+      if (o && o.app === "alexandria" && Array.isArray(o.msgs)) return { kind: "backup", msgs: o.msgs };
+    } catch (e) { /* テキストとして読む */ }
+  }
+  var p = parseText(t); p.kind = "text"; return p;
+}
+function toRecs(src, items) {
+  return items.map(function (it, i) {
+    return { src: src, seq: i, sender: it.sender, time: it.time, t: timeKey(it.time), text: it.text };
+  });
+}
 
-        request.onsuccess = (e) => {
-            db = e.target.result;
-            console.log("データベース、準備完了です");
-        };
+/* ---------- 取り込み ---------- */
+function readFile(file) {
+  return new Promise(function (res, rej) {
+    var fr = new FileReader();
+    fr.onload = function () { res(String(fr.result)); };
+    fr.onerror = function () { rej(fr.error); };
+    fr.readAsText(file);
+  });
+}
+function importOne(name, text) {
+  var p = parseAny(text);
+  if (p.kind === "backup") {
+    var groups = {};
+    p.msgs.forEach(function (m) { (groups[m.src] = groups[m.src] || []).push(m); });
+    var names = Object.keys(groups), chain = Promise.resolve();
+    names.forEach(function (s) {
+      chain = chain.then(function () {
+        var arr = groups[s].sort(function (a, b) { return a.seq - b.seq; });
+        var recs = arr.map(function (m, i) {
+          return { src: s, seq: i, sender: m.sender, time: m.time, t: timeKey(m.time), text: m.text };
+        });
+        return replaceSource(s, recs).then(function () { log(name + " → " + s + ": " + recs.length + "件を復元"); });
+      });
+    });
+    return chain;
+  }
+  if (!p.items.length) { log(name + ": 発言を読み取れませんでした（0件）"); return Promise.resolve(); }
+  var old = bySrc[name];
+  if (old && p.items.length < old.length) {
+    if (!confirm(name + " は既に " + old.length + "件あります。新しい版は " + p.items.length + "件です。置き換えますか？")) {
+      log(name + ": 取り込みを中止しました"); return Promise.resolve();
+    }
+  }
+  return replaceSource(name, toRecs(name, p.items)).then(function () {
+    log(name + ": " + p.items.length + "件" + (old ? "（同名のソースを置き換え）" : "") +
+        (p.skipped ? "、ヘッダー前の " + p.skipped + "行は無視" : ""));
+  });
+}
 
-        request.onerror = (e) => {
-            console.error("データベースを開けませんでした", e);
-        };
-    </script>
+/* ---------- 検索 ---------- */
+function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+function appendHL(parent, text, re) {
+  var parts = text.split(re);
+  parts.forEach(function (p, i) {
+    if (i % 2 === 1) {
+      var m = document.createElement("mark"); m.textContent = p; parent.appendChild(m);
+    } else if (p) {
+      parent.appendChild(document.createTextNode(p));
+    }
+  });
+}
+function cmp(a, b) {
+  var ta = a.t == null ? Infinity : a.t, tb = b.t == null ? Infinity : b.t;
+  if (ta !== tb) return ta < tb ? -1 : 1;
+  if (a.src !== b.src) return a.src < b.src ? -1 : 1;
+  return a.seq - b.seq;
+}
+function doSearch() {
+  var q = $("q").value.trim();
+  if (!q) return;
+  var terms = q.toLowerCase().split(/[\s\u3000]+/).filter(Boolean);
+  var srcSel = $("f-src").value, sndSel = $("f-snd").value;
+  var hits = all.filter(function (r) {
+    if (srcSel && r.src !== srcSel) return false;
+    if (sndSel && r.sender !== sndSel) return false;
+    for (var i = 0; i < terms.length; i++) { if (r._l.indexOf(terms[i]) < 0) return false; }
+    return true;
+  });
+  hits.sort(cmp);
+  if ($("desc").checked) hits.reverse();
+  var re = new RegExp("(" + terms.map(esc).join("|") + ")", "gi");
+  renderHits(hits, terms, re);
+}
+function renderHits(hits, terms, re) {
+  var box = $("results"); box.innerHTML = "";
+  $("hitcount").textContent = hits.length + "件" + (hits.length > LIMIT ? "（先頭 " + LIMIT + "件を表示。語を足すと絞れます）" : "");
+  hits.slice(0, LIMIT).forEach(function (r) {
+    var d = document.createElement("div"); d.className = "hit";
+    var meta = document.createElement("div"); meta.className = "meta";
+    meta.textContent = (r.time || "日時なし") + "　" + r.sender + "　[" + r.src + "]";
+    var sn = document.createElement("div"); sn.className = "snip";
+    var idx = r._l.indexOf(terms[0]); if (idx < 0) idx = 0;
+    var s = Math.max(0, idx - 40), e = Math.min(r.text.length, idx + terms[0].length + 80);
+    appendHL(sn, (s > 0 ? "…" : "") + r.text.slice(s, e) + (e < r.text.length ? "…" : ""), re);
+    d.appendChild(meta); d.appendChild(sn);
+    d.onclick = function () { toggleCtx(d, r, re); };
+    box.appendChild(d);
+  });
+}
+function toggleCtx(d, r, re) {
+  var ex = d.querySelector(".ctx");
+  if (ex) { d.removeChild(ex); return; }
+  var ctx = document.createElement("div"); ctx.className = "ctx";
+  ctx.onclick = function (ev) { ev.stopPropagation(); };
+  var arr = bySrc[r.src];
+  var a = Math.max(0, r._pos - 5), b = Math.min(arr.length - 1, r._pos + 5);
+  function draw() {
+    ctx.innerHTML = "";
+    var up = btn("↑ さらに前5件", function () { a = Math.max(0, a - 5); draw(); });
+    up.disabled = (a === 0); ctx.appendChild(up);
+    for (var i = a; i <= b; i++) {
+      var m = arr[i];
+      var e = document.createElement("div"); e.className = "msg" + (i === r._pos ? " cur" : "");
+      var h = document.createElement("div"); h.className = "meta"; h.textContent = (m.time || "") + "　" + m.sender;
+      var t = document.createElement("div"); t.className = "body"; appendHL(t, m.text, re);
+      e.appendChild(h); e.appendChild(t); ctx.appendChild(e);
+    }
+    var dn = btn("↓ さらに後5件", function () { b = Math.min(arr.length - 1, b + 5); draw(); });
+    dn.disabled = (b === arr.length - 1); ctx.appendChild(dn);
+  }
+  draw(); d.appendChild(ctx);
+}
+
+/* ---------- 画面 ---------- */
+function refreshUI() {
+  var chars = 0; all.forEach(function (r) { chars += r.text.length; });
+  $("stat").textContent = all.length.toLocaleString() + "件 / " + chars.toLocaleString() + "字";
+
+  var srcs = Object.keys(bySrc).sort();
+  var senders = {}; all.forEach(function (r) { senders[r.sender] = 1; });
+  fillSelect($("f-src"), "全ソース", srcs);
+  fillSelect($("f-snd"), "全発言者", Object.keys(senders).sort());
+
+  var list = $("srclist"); list.innerHTML = "";
+  if (!srcs.length) { list.textContent = "ソースがありません。取り込みタブから追加してください。"; return; }
+  srcs.forEach(function (s) {
+    var arr = bySrc[s], first = null, last = null;
+    arr.forEach(function (r) { if (r.time) { if (first === null) first = r.time; last = r.time; } });
+    var row = document.createElement("div"); row.className = "srcrow";
+    var info = document.createElement("div"); info.className = "info";
+    info.textContent = s + "\n" + arr.length + "件　" + (first ? first + " ～ " + last : "日時なし");
+    info.style.whiteSpace = "pre-wrap";
+    row.appendChild(info);
+    row.appendChild(btn("削除", function () {
+      if (!confirm(s + " を削除しますか？（元のログファイルは消えません）")) return;
+      replaceSource(s, []).then(refresh);
+    }, "danger"));
+    list.appendChild(row);
+  });
+}
+function fillSelect(sel, firstLabel, values) {
+  var cur = sel.value;
+  sel.innerHTML = "";
+  var o0 = document.createElement("option"); o0.value = ""; o0.textContent = firstLabel; sel.appendChild(o0);
+  values.forEach(function (v) {
+    var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o);
+  });
+  sel.value = values.indexOf(cur) >= 0 ? cur : "";
+}
+
+/* ---------- イベント ---------- */
+document.querySelectorAll("nav button").forEach(function (b) {
+  b.onclick = function () {
+    document.querySelectorAll("nav button").forEach(function (x) { x.classList.toggle("on", x === b); });
+    ["search", "import", "manage"].forEach(function (t) {
+      $("tab-" + t).classList.toggle("hidden", t !== b.getAttribute("data-tab"));
+    });
+  };
+});
+$("go").onclick = doSearch;
+$("q").addEventListener("keydown", function (e) { if (e.key === "Enter") doSearch(); });
+
+$("files").onchange = function (e) {
+  var files = Array.prototype.slice.call(e.target.files);
+  var chain = Promise.resolve();
+  files.forEach(function (f) {
+    chain = chain.then(function () { return readFile(f); })
+      .then(function (txt) { return importOne(f.name, txt); })
+      .catch(function (err) { log(f.name + ": エラー " + err.message); });
+  });
+  chain.then(refresh).then(function () { e.target.value = ""; });
+};
+$("paste-go").onclick = function () {
+  var txt = $("paste-text").value;
+  if (!txt.trim()) return;
+  var name = $("paste-name").value.trim() || ("paste_" + stamp());
+  importOne(name, txt)
+    .catch(function (err) { log(name + ": エラー " + err.message); })
+    .then(refresh)
+    .then(function () { $("paste-text").value = ""; $("paste-name").value = ""; });
+};
+$("export").onclick = function () {
+  var msgs = all.map(function (r) { return { src: r.src, seq: r.seq, sender: r.sender, time: r.time, t: r.t, text: r.text }; });
+  downloadText("alexandria_backup_" + stamp() + ".json",
+    JSON.stringify({ app: "alexandria", ver: VERSION, msgs: msgs }), "application/json");
+};
+$("clear").onclick = function () {
+  if (!confirm("このアプリの全データを消去しますか？（元のログファイルは消えません）")) return;
+  clearAll().then(refresh);
+};
+
+/* ---------- 起動 ---------- */
+if (!window.indexedDB) {
+  $("stat").textContent = "IndexedDBが使えません";
+} else {
+  openDB().then(function (d) {
+    db = d;
+    if (navigator.storage && navigator.storage.persist) { navigator.storage.persist().catch(function () {}); }
+    return refresh();
+  }).catch(function (err) { $("stat").textContent = "起動エラー: " + err.message; });
+}
+})();
+</script>
+</body>
+</html>
