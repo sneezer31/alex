@@ -7,41 +7,49 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
-body { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; font-family: sans-serif; background: #f4f4f5; color: #333; font-size: 15px; }
-header { flex: none; background: #2c3e50; color: #fff; padding: 10px 14px; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; font-weight: bold; }
-header .ver { font-size: 11px; font-weight: normal; opacity: .7; }
-header #stat { font-size: 12px; font-weight: normal; opacity: .85; margin-left: auto; }
+body { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; font: 15px/1.5 sans-serif; background: #f4f4f5; color: #333; }
+header { flex: none; background: #2c3e50; color: #fff; padding: 8px 12px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-weight: bold; }
+header small { font-weight: normal; opacity: .75; font-size: 12px; }
+#stat { margin-left: auto; font-weight: normal; font-size: 12px; opacity: .9; }
+#err { flex: none; background: #c0392b; color: #fff; padding: 6px 12px; font-size: 12px; white-space: pre-wrap; }
 nav { flex: none; display: flex; background: #34495e; }
-nav button { flex: 1; padding: 12px 4px; border: none; background: none; color: #bdc3c7; font-size: 15px; font-weight: bold; }
+nav button { flex: 1; padding: 12px 4px; border: 0; background: none; color: #bdc3c7; font-size: 15px; font-weight: bold; }
 nav button.on { color: #fff; background: #2980b9; }
 .tab { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; }
 .hidden { display: none !important; }
 .row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
 input[type=search], input[type=date], select { padding: 9px; border: 1px solid #95a5a6; border-radius: 5px; font-size: 15px; background: #fff; }
 input[type=search] { flex: 1; min-width: 160px; }
-button.act { padding: 9px 14px; border: none; border-radius: 5px; background: #2980b9; color: #fff; font-size: 14px; font-weight: bold; }
-button.act.gray { background: #7f8c8d; }
-button.act.danger { background: #c0392b; }
-button:disabled { opacity: .4; }
-p.note { font-size: 13px; color: #555; margin: 8px 0; line-height: 1.6; }
-pre.log { background: #2c3e50; color: #ecf0f1; padding: 10px; border-radius: 5px; margin: 8px 0; white-space: pre-wrap; font-size: 12px; min-height: 20px; }
+.btn { padding: 9px 14px; border: 0; border-radius: 5px; background: #2980b9; color: #fff; font-size: 14px; font-weight: bold; }
+.btn.gray { background: #7f8c8d; }
+.btn.red { background: #c0392b; }
+.btn:disabled { opacity: .4; }
+.note { font-size: 13px; color: #555; margin: 6px 0 10px; line-height: 1.6; }
+h3 { margin: 16px 0 6px; font-size: 16px; }
+pre.log { background: #2c3e50; color: #ecf0f1; padding: 10px; border-radius: 5px; margin: 8px 0; white-space: pre-wrap; font-size: 12px; }
 pre.log:empty { display: none; }
+#total { font-size: 13px; color: #555; margin: 6px 0; white-space: pre-wrap; }
+.frow { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin: 6px 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.frow input[type=checkbox] { width: 22px; height: 22px; flex: none; }
+.frow .info { flex: 1; min-width: 150px; font-size: 13px; line-height: 1.5; word-break: break-all; white-space: pre-wrap; }
 #tab-view { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
 #vbar { flex: none; padding: 8px 12px; background: #ecf0f1; border-bottom: 1px solid #bdc3c7; }
-#vinfo { font-size: 12px; color: #555; }
+#vinfo { font-size: 12px; color: #555; margin-bottom: 6px; min-height: 16px; }
+#selbar, #ovbar { margin-bottom: 0; }
+#ovbar { margin-bottom: 6px; font-size: 12px; }
+#selinfo { font-size: 13px; font-weight: bold; }
+#selmsg { font-size: 12px; color: #27ae60; }
 #viewer { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; position: relative; background: #fff; }
 .dayhead { margin: 18px 0 8px; padding: 6px 10px; background: #2c3e50; color: #fff; border-radius: 4px; font-weight: bold; font-size: 13px; }
-.msg { padding: 8px 10px; margin: 6px 0; border-radius: 5px; background: #f7f9fb; border-left: 4px solid #95a5a6; }
-.msg.crew-captain { border-left-color: #2980b9; }
-.msg.crew-kanae { border-left-color: #e67e22; }
-.msg.crew-shiori { border-left-color: #27ae60; }
+.msg { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; margin: 6px 0; border-radius: 5px; background: #f7f9fb; border-left: 4px solid #95a5a6; }
+.msg.c-captain { border-left-color: #2980b9; }
+.msg.c-kanae { border-left-color: #e67e22; }
+.msg.c-shiori { border-left-color: #27ae60; }
 .msg.flash { background: #fff3cd; }
+.mcb { width: 22px; height: 22px; flex: none; margin-top: 2px; }
+.main { flex: 1; min-width: 0; }
 .meta { font-size: 12px; color: #777; margin-bottom: 4px; }
 .body { white-space: pre-wrap; line-height: 1.7; word-break: break-all; }
-.qs { margin-top: 6px; font-size: 12px; color: #7f8c8d; word-break: break-all; }
-.frow { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.frow input[type=checkbox] { width: 20px; height: 20px; flex: none; }
-.frow .info { flex: 1; min-width: 140px; font-size: 13px; line-height: 1.5; word-break: break-all; white-space: pre-wrap; }
 .hit { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer; }
 .snip { white-space: pre-wrap; line-height: 1.6; word-break: break-all; }
 mark { background: #ffe58f; padding: 0 1px; }
@@ -49,27 +57,34 @@ mark { background: #ffe58f; padding: 0 1px; }
 </style>
 </head>
 <body>
-<header><span>アレクサンドリア</span><span class="ver">版 20261018-3</span><span id="stat"></span></header>
+<header><span>アレクサンドリア</span><small>版 20261018-4</small><span id="stat"></span></header>
+<div id="err" class="hidden"></div>
 <nav>
   <button data-tab="view" class="on">閲覧</button>
   <button data-tab="search">検索</button>
-  <button data-tab="files">ファイル</button>
-  <button data-tab="make">作る</button>
+  <button data-tab="vault">格納庫</button>
 </nav>
 
 <section id="tab-view" class="tab">
   <div id="vbar">
-    <div class="row" style="margin-bottom:6px">
+    <div class="row">
       <input type="date" id="vdate">
-      <button class="act gray" id="vprev">◀ 前の日</button>
-      <button class="act gray" id="vnext">次の日 ▶</button>
-      <button class="act gray" id="vtop">先頭</button>
-      <button class="act gray" id="vend">末尾</button>
+      <button class="btn gray" id="vprev">◀ 前の日</button>
+      <button class="btn gray" id="vnext">次の日 ▶</button>
+      <button class="btn gray" id="vtop">先頭</button>
+      <button class="btn gray" id="vend">末尾</button>
     </div>
     <div id="vinfo"></div>
-    <div id="voverride" class="row hidden" style="margin:6px 0 0">
-      <span id="voname" style="font-size:12px"></span>
-      <button class="act" id="voback">チェックの選択に戻る</button>
+    <div class="row hidden" id="ovbar">
+      <span id="ovname"></span>
+      <button class="btn" id="ovback">チェックの選択に戻る</button>
+    </div>
+    <div class="row" id="selbar">
+      <span id="selinfo"></span>
+      <button class="btn" id="bcopy">コピー</button>
+      <button class="btn red" id="bdel">削除</button>
+      <button class="btn gray" id="bclr">選択解除</button>
+      <span id="selmsg"></span>
     </div>
   </div>
   <div id="viewer"></div>
@@ -78,514 +93,536 @@ mark { background: #ffe58f; padding: 0 1px; }
 <section id="tab-search" class="tab hidden">
   <div class="row">
     <input id="q" type="search" placeholder="語（空白区切りでAND）">
-    <button id="go" class="act">検索</button>
+    <button class="btn" id="go">検索</button>
   </div>
-  <div class="row">
-    <label><input type="checkbox" id="desc"> 新しい順</label>
-    <label><input type="checkbox" id="qinc"> 検索ワードも対象にする</label>
-  </div>
+  <div class="row"><label><input type="checkbox" id="desc"> 新しい順</label></div>
+  <p class="note">対象は、格納庫でチェックしたファイルです。チェックが0個なら、全部の週ファイルが対象です。</p>
   <div id="hitcount"></div>
   <div id="results"></div>
 </section>
 
-<section id="tab-files" class="tab hidden">
-  <p class="note">「作る」で書き出したJSONを取り込みます。複数選択できます。同じ名前は置き換えます。チェックしたファイルが、閲覧と検索の対象です。検索は、チェックが0個なら全ファイルが対象です。</p>
-  <input type="file" id="files" multiple>
-  <pre class="log" id="flog"></pre>
-  <div class="row" style="margin-top:8px">
-    <button class="act gray" id="selall">全選択</button>
-    <button class="act gray" id="selnone">全解除</button>
-  </div>
-  <div id="flist"></div>
-</section>
-
-<section id="tab-make" class="tab hidden">
-  <p class="note">旧ファイル（船の搬出JSON）を選びます。読むだけで、元のファイルは書き換えません。読み込んだ分は、ページを閉じると消えます。各ファイルの「AIの発言」は、そのファイルでAIが誰だったかを選びます。</p>
-  <input type="file" id="mk-files" multiple>
-  <div class="row" style="margin-top:8px"><button class="act gray" id="mk-clear">読み込みを空にする</button></div>
-  <pre class="log" id="mk-log"></pre>
-  <div id="mk-src" style="margin-top:8px"></div>
-  <pre class="log" id="mk-sum"></pre>
+<section id="tab-vault" class="tab hidden">
+  <p class="note">使い方: ①「大きなファイル」にJSONを入れる（週ファイルも自動でできます）。②一覧で、読みたいものにチェックを入れる。③「閲覧」タブで読む。大きなファイルと週ファイルは、同時にはチェックできません。</p>
   <div class="row">
-    <label><input type="radio" name="mode" value="all" checked> 全部を1本</label>
-    <label><input type="radio" name="mode" value="week"> 週ごと（日曜始まり）</label>
+    <label>持ち主（ファイル名が kanae か shiori で始まらないときに使います）
+      <select id="ownerSel"><option value="">未選択</option><option value="kanae">かなえ</option><option value="shiori">栞</option></select>
+    </label>
   </div>
-  <div id="mk-out"></div>
-  <p class="note">書き出したファイルの先頭に、18か19を手でつけてください。アプリは番号に触れません。</p>
+  <div class="row">
+    <label>一覧の表示
+      <select id="ownerFilter"><option value="">すべて</option><option value="kanae">かなえ</option><option value="shiori">栞</option></select>
+    </label>
+  </div>
+  <div id="total"></div>
+  <pre class="log" id="log"></pre>
+
+  <h3>大きなファイル</h3>
+  <p class="note">複数選ぶと、重複を除いて1本にまとめます。入れると、持ち主ごとの週ファイルを自動で作ります。</p>
+  <input type="file" id="inBig" multiple>
+  <div class="row" style="margin-top:8px">
+    <button class="btn gray" id="allBig">表示中を全選択</button>
+    <button class="btn gray" id="noBig">全解除</button>
+  </div>
+  <div id="listBig"></div>
+
+  <h3>週ファイル</h3>
+  <p class="note">週ファイルを1つずつ単独で入れるときに使います。同じ名前は置き換えます。</p>
+  <input type="file" id="inWeek" multiple>
+  <div class="row" style="margin-top:8px">
+    <button class="btn gray" id="allWeek">表示中を全選択</button>
+    <button class="btn gray" id="noWeek">全解除</button>
+  </div>
+  <div id="listWeek"></div>
 </section>
 
 <script>
-(function () {
 "use strict";
-var VERSION = "20261018-3", DB_NAME = "alexandria3", FORMAT_V = 2;
-var CHUNK = 150, LIMIT = 300;
-/* 発言者名 → crew。ここだけ直せば対応表を変えられる。
-   senderが「AI」のときは、作る工程のファイルごとの選択で決める */
-var CREW_MAP = [[/^船長$/, "captain"], [/かなえ/, "kanae"], [/ソネット|栞/, "shiori"]];
-var AI_SENDER = /^ai$/i;
-var WD = ["日", "月", "火", "水", "木", "金", "土"];
+(() => {
+const DB_NAME = "alexandria4", CHUNK = 150, LIMIT = 300;
+const OWNER_NAME = { kanae: "かなえ", shiori: "栞" };
+const WD = ["日", "月", "火", "水", "木", "金", "土"];
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, "0");
+const tick = () => new Promise(r => setTimeout(r, 0));                         // 画面に制御を返す
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));   // 次の描き直しまで待つ
+const mk = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const kindOf = id => id.slice(0, id.indexOf(":"));
+const nameCmp = (a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
-function $(id) { return document.getElementById(id); }
-function pad(n) { return ("0" + n).slice(-2); }
-function mk(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-function nextFrame() { return new Promise(function (r) { requestAnimationFrame(function () { r(); }); }); }
-function tick() { return new Promise(function (r) { setTimeout(r, 0); }); }
-function download(name, content, mime) {
-  var url = URL.createObjectURL(new Blob([content], { type: mime || "text/plain;charset=utf-8" }));
-  var a = document.createElement("a"); a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+function showErr(e) {
+  const b = $("err"); b.textContent = "エラー: " + (e && e.message ? e.message : e) + "（タップで消す）"; b.classList.remove("hidden");
 }
-function readFile(file) {
-  return new Promise(function (res, rej) {
-    var fr = new FileReader();
-    fr.onload = function () { res(String(fr.result)); };
-    fr.onerror = function () { rej(fr.error); };
-    fr.readAsText(file);
-  });
-}
-function crewOf(sender, aiCrew) {
-  if (AI_SENDER.test(sender)) return aiCrew || "unknown";
-  for (var i = 0; i < CREW_MAP.length; i++) { if (CREW_MAP[i][0].test(sender)) return CREW_MAP[i][1]; }
-  return "unknown";
-}
+$("err").onclick = () => $("err").classList.add("hidden");
+window.addEventListener("error", ev => showErr(ev.message));
+window.addEventListener("unhandledrejection", ev => showErr(ev.reason));
 
-/* ---------- 時刻 ---------- */
+/* ========== 時刻・週 ========== */
 function timeKey(s) {
-  var m = String(s || "").match(/(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})\D+(\d{1,2}):(\d{2})/);
-  return m ? (+m[1]) * 1e8 + (+m[2]) * 1e6 + (+m[3]) * 1e4 + (+m[4]) * 100 + (+m[5]) : null;
+  const m = /(\d{4})[\/.\-](\d{1,2})[\/.\-](\d{1,2})\D+(\d{1,2}):(\d{2})/.exec(s);
+  return m ? Number(m[1]) * 1e8 + Number(m[2]) * 1e6 + Number(m[3]) * 1e4 + Number(m[4]) * 100 + Number(m[5]) : null;
 }
-function ymd(t) { return t ? Math.floor(t / 1e8) + "-" + pad(Math.floor(t / 1e6) % 100) + "-" + pad(Math.floor(t / 1e4) % 100) : ""; }
+const ymd = t => (t ? `${Math.floor(t / 1e8)}-${pad(Math.floor(t / 1e6) % 100)}-${pad(Math.floor(t / 1e4) % 100)}` : "");
 function dayLabel(day) {
-  var p = day.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
-  return p[0] + "/" + p[1] + "/" + p[2] + "(" + WD[d.getDay()] + ")";
+  const p = day.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
+  return `${p[0]}/${p[1]}/${p[2]}(${WD[d.getDay()]})`;
 }
-function weekKey(t) {
+function weekKey(t) {                       // 日曜始まり、0時区切り
   if (!t) return "undated";
-  var d = new Date(Math.floor(t / 1e8), Math.floor(t / 1e6) % 100 - 1, Math.floor(t / 1e4) % 100);
+  const d = new Date(Math.floor(t / 1e8), Math.floor(t / 1e6) % 100 - 1, Math.floor(t / 1e4) % 100);
   d.setDate(d.getDate() - d.getDay());
-  return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate());
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
 }
-function cmpMsg(a, b) { return (a._t - b._t) || (a._o - b._o) || (a._seq - b._seq); }
-
-/* ---------- 読み取り（JSONのみ） ---------- */
-function queriesFrom(th) {
-  var out = [];
-  th.split("\n").forEach(function (ln) {
-    var m = ln.match(/^\s*\[検索\]\s*(.+)$/); if (!m) return;
-    var q = m[1].trim();
-    try { var o = JSON.parse(q); if (o && typeof o.query === "string") q = o.query; } catch (e) { /* 生の文字列のまま */ }
-    if (q) out.push(q);
-  });
+/* 日時のない発言は、直前の発言の時刻を引き継ぐ。配列に t を付けた {m,i,t} を返す */
+function withTimes(msgs) {
+  let last = 0;
+  return msgs.map((m, i) => { let t = timeKey(m.time); if (t === null) t = last; else last = t; return { m, i, t }; });
+}
+function sortMsgs(msgs) {
+  const k = withTimes(msgs);
+  k.sort((a, b) => a.t - b.t || a.i - b.i);
+  return k.map(x => x.m);
+}
+function uniq(msgs) {
+  const seen = new Set(), out = [];
+  for (const m of msgs) {
+    const k = `${m.time}\u0001${m.sender}\u0001${m.text}`;
+    if (!seen.has(k)) { seen.add(k); out.push(m); }
+  }
   return out;
 }
-function normalize(raw) {
-  var o = {};
-  Object.keys(raw).forEach(function (k) { o[k] = raw[k]; });
-  var th = o.thinking; delete o.thinking;
-  var qs = Array.isArray(o.queries) ? o.queries.map(String) : [];
-  if (typeof th === "string") queriesFrom(th).forEach(function (q) { if (qs.indexOf(q) < 0) qs.push(q); });
-  if (qs.length) o.queries = qs; else delete o.queries;
-  o.sender = String(o.sender == null ? "?" : o.sender);
-  o.time = String(o.time == null ? "" : o.time);
-  o.text = String(o.text);
-  return o;
+function splitWeeks(msgs) {                 // 並べ終えた配列を、週ごとの Map にする
+  const g = new Map();
+  for (const x of withTimes(msgs)) {
+    const k = weekKey(x.t);
+    if (!g.has(k)) g.set(k, []);
+    g.get(k).push(x.m);
+  }
+  return g;
 }
-function parseJSON(text) {
-  var arr = JSON.parse(String(text).replace(/^\uFEFF/, "").trim());
+function rangeName(msgs) {
+  let f = null, l = null;
+  for (const m of msgs) { const t = timeKey(m.time); if (t !== null) { if (f === null) f = t; l = t; } }
+  const d8 = t => (t ? ymd(t).replace(/-/g, "") : "undated");
+  return `${d8(f)}-${d8(l)}`;
+}
+const nameOf = (sender, owner) => (sender === "船長" ? "船長" : /^ai$/i.test(sender) ? (OWNER_NAME[owner] || "AI") : sender);
+const crewOf = (sender, owner) => (sender === "船長" ? "captain" : /^ai$/i.test(sender) ? owner : "other");
+
+/* ========== 読み取り・持ち主 ========== */
+function parseMsgs(text) {
+  const arr = JSON.parse(text.replace(/^\uFEFF/, ""));
   if (!Array.isArray(arr)) throw new Error("配列ではありません");
-  var items = [];
-  arr.forEach(function (x) { if (x && typeof x === "object" && typeof x.text === "string") items.push(normalize(x)); });
-  return { items: items, skipped: arr.length - items.length };
+  const msgs = [];
+  for (const x of arr) {
+    if (x && typeof x === "object" && typeof x.text === "string") {
+      msgs.push({ ...x, sender: String(x.sender ?? "?"), time: String(x.time ?? ""), text: x.text });
+    }
+  }
+  return { msgs, skipped: arr.length - msgs.length };
+}
+function ownerOf(fileName) {
+  const m = /^(kanae|shiori)/i.exec(fileName);
+  return m ? m[1].toLowerCase() : $("ownerSel").value;
 }
 
-/* ---------- IndexedDB ----------
-   meta: 名前・件数・期間（軽い。起動時はこれだけ読む）
-   body: 発言の配列（重い。必要なファイルだけ、必要なときに読む） */
-var db = null;
-function reqP(r) { return new Promise(function (res, rej) { r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
-function txDone(t) { return new Promise(function (res, rej) { t.oncomplete = function () { res(); }; t.onerror = t.onabort = function () { rej(t.error || new Error("DBの書き込みに失敗")); }; }); }
+/* ========== IndexedDB ==========
+   meta: id・持ち主・件数・期間（軽い。一覧と起動はこれだけ読む）
+   body: 発言の配列（重い。閲覧・検索で必要なファイルだけ読む）
+   id は "big:名前" か "week:名前"。棚は id の頭で分かれる。
+   async 関数の中の await は、結果が返るまでその関数だけが待つ、という意味。画面は止まらない。 */
+let db = null, metas = new Map();
+const reqP = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+const txP = t => new Promise((res, rej) => { t.oncomplete = () => res(); t.onerror = t.onabort = () => rej(t.error || new Error("DBの書き込みに失敗")); });
 function openDB() {
-  return new Promise(function (res, rej) {
-    var r = indexedDB.open(DB_NAME, 1);
-    r.onupgradeneeded = function () {
-      r.result.createObjectStore("meta", { keyPath: "name" });
-      r.result.createObjectStore("body", { keyPath: "name" });
-    };
-    r.onsuccess = function () { res(r.result); };
-    r.onerror = function () { rej(r.error); };
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(DB_NAME, 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore("meta", { keyPath: "id" }); r.result.createObjectStore("body", { keyPath: "id" }); };
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
   });
 }
-function getMetas() { return reqP(db.transaction("meta", "readonly").objectStore("meta").getAll()); }
-function getBody(name) { return reqP(db.transaction("body", "readonly").objectStore("body").get(name)).then(function (r) { return r ? r.msgs : []; }); }
-function saveFile(name, msgs) {
-  var first = null, last = null, chars = 0;
-  msgs.forEach(function (m) { chars += m.text.length; if (m.time) { if (first === null) first = m.time; last = m.time; } });
-  var t = db.transaction(["meta", "body"], "readwrite");
-  t.objectStore("meta").put({ name: name, n: msgs.length, chars: chars, first: first, last: last });
-  t.objectStore("body").put({ name: name, msgs: msgs });
-  return txDone(t);
+const getAllMeta = () => reqP(db.transaction("meta").objectStore("meta").getAll());
+async function getBody(id) {
+  const r = await reqP(db.transaction("body").objectStore("body").get(id));
+  return r ? r.msgs : [];
 }
-function removeFile(name) {
-  var t = db.transaction(["meta", "body"], "readwrite");
-  t.objectStore("meta").delete(name); t.objectStore("body").delete(name);
-  return txDone(t);
+function makeMeta(kind, name, owner, msgs) {
+  let chars = 0, first = null, last = null;
+  for (const m of msgs) { chars += m.text.length; if (timeKey(m.time) !== null) { if (first === null) first = m.time; last = m.time; } }
+  return { id: `${kind}:${name}`, kind, name, owner, n: msgs.length, chars, first, last };
+}
+async function putFiles(list) {              // list: [{kind,name,owner,msgs}]。1回の書き込みにまとめる
+  const t = db.transaction(["meta", "body"], "readwrite");
+  for (const f of list) {
+    const meta = makeMeta(f.kind, f.name, f.owner, f.msgs);
+    t.objectStore("meta").put(meta);
+    t.objectStore("body").put({ id: meta.id, msgs: f.msgs });
+  }
+  await txP(t);
+}
+async function removeFiles(ids) {
+  const t = db.transaction(["meta", "body"], "readwrite");
+  for (const id of ids) { t.objectStore("meta").delete(id); t.objectStore("body").delete(id); }
+  await txP(t);
 }
 
-/* ---------- 作る工程 ---------- */
-var srcFiles = [], merged = [], mkLines = [];
-function mkLog(s) { mkLines.push(s); $("mk-log").textContent = mkLines.join("\n"); }
-function buildMerged() {
-  var seen = Object.create(null), out = [], dup = 0, unk = {}, qn = 0;
-  srcFiles.forEach(function (sf, fi) {
-    var lastT = 0;
-    sf.items.forEach(function (it, i) {
-      var t = timeKey(it.time); if (t === null) t = lastT; else lastT = t;
-      var key = it.time + "\u0001" + it.sender + "\u0001" + it.text;
-      if (seen[key]) { dup++; return; }
-      seen[key] = 1;
-      var o = {};
-      Object.keys(it).forEach(function (k) { o[k] = it[k]; });
-      if (!o.crew) o.crew = crewOf(o.sender, sf.ai);
-      if (o.crew === "unknown") unk[o.sender] = (unk[o.sender] || 0) + 1;
-      if (o.queries) qn += o.queries.length;
-      o.v = FORMAT_V;
-      o._t = t; o._o = fi; o._s = i;
-      out.push(o);
-    });
-  });
-  out.sort(function (a, b) { return (a._t - b._t) || (a._o - b._o) || (a._s - b._s); });
-  merged = out;
-  var un = Object.keys(unk), s = "";
-  if (out.length) {
-    s = "重複 " + dup + "件を捨て、" + out.length + "件を時系列に並べました。検索ワード " + qn + "個。\n";
-    s += un.length ? "crewが unknown: " + un.map(function (n) { return n + "(" + unk[n] + ")"; }).join("、") : "crewが unknown の発言はありません。";
-  }
-  $("mk-sum").textContent = s;
-  renderMake();
-}
-function toJSON(arr) { return JSON.stringify(arr, function (k, v) { return k.charAt(0) === "_" ? undefined : v; }, 2); }
-function rangeName() {
-  var f = null, l = null;
-  merged.forEach(function (m) { if (m._t) { if (f === null) f = m._t; l = m._t; } });
-  function d8(t) { return t ? ymd(t).replace(/-/g, "") : "undated"; }
-  return d8(f) + "-" + d8(l);
-}
-function renderMake() {
-  var box = $("mk-out"); box.innerHTML = "";
-  if (!merged.length) return;
-  var week = document.querySelector("input[name=mode]:checked").value === "week";
-  if (!week) {
-    var b = mk("button", "act", "全部を1本で書き出し（" + merged.length + "件）");
-    b.onclick = function () { download("all_" + rangeName() + ".json", toJSON(merged), "application/json"); };
-    var r0 = mk("div", "row"); r0.appendChild(b); box.appendChild(r0);
-    return;
-  }
-  var groups = {}, keys = [];
-  merged.forEach(function (m) { var k = weekKey(m._t); if (!groups[k]) { groups[k] = []; keys.push(k); } groups[k].push(m); });
-  keys.sort();
-  box.appendChild(mk("p", "note", "週ごと（日曜始まり、0時区切り）: " + keys.length + "週。1つずつ書き出します。"));
-  keys.forEach(function (k) {
-    var b = mk("button", "act gray", "week_" + k + ".json（" + groups[k].length + "件）");
-    b.onclick = function () { download("week_" + k + ".json", toJSON(groups[k]), "application/json"); };
-    var r = mk("div", "row"); r.appendChild(b); box.appendChild(r);
-  });
-}
-function renderSrc() {
-  var box = $("mk-src"); box.innerHTML = "";
-  srcFiles.forEach(function (sf, idx) {
-    var row = mk("div", "frow");
-    row.appendChild(mk("div", "info", sf.name + "\n" + sf.items.length + "件"));
-    var sel = document.createElement("select");
-    [["", "AIの発言: 未設定"], ["kanae", "AIの発言: kanae"], ["shiori", "AIの発言: shiori"]].forEach(function (o) {
-      var op = mk("option", "", o[1]); op.value = o[0]; sel.appendChild(op);
-    });
-    sel.value = sf.ai;
-    sel.onchange = function () { sf.ai = sel.value; buildMerged(); };
-    var del = mk("button", "act danger", "外す");
-    del.onclick = function () { srcFiles.splice(idx, 1); renderSrc(); buildMerged(); };
-    row.appendChild(sel); row.appendChild(del); box.appendChild(row);
-  });
-}
-$("mk-files").onchange = function (e) {
-  var fl = Array.prototype.slice.call(e.target.files), chain = Promise.resolve();
-  fl.forEach(function (f) {
-    chain = chain.then(function () { return readFile(f); }).then(function (txt) {
-      var p = parseJSON(txt), idx = -1;
-      srcFiles.forEach(function (s, i) { if (s.name === f.name) idx = i; });
-      var rec = { name: f.name, items: p.items, ai: idx >= 0 ? srcFiles[idx].ai : "" };
-      if (idx >= 0) srcFiles[idx] = rec; else srcFiles.push(rec);
-      mkLog(f.name + ": " + p.items.length + "件" + (p.skipped ? "（読み取れない " + p.skipped + "要素は無視）" : "") + (idx >= 0 ? "（同名を置き換え）" : ""));
-    }).catch(function (err) { mkLog(f.name + ": エラー " + err.message); });
-  });
-  chain.then(function () { e.target.value = ""; renderSrc(); buildMerged(); });
-};
-$("mk-clear").onclick = function () {
-  srcFiles = []; merged = []; mkLines = [];
-  $("mk-log").textContent = ""; renderSrc(); buildMerged();
-};
-Array.prototype.forEach.call(document.querySelectorAll("input[name=mode]"), function (r) { r.onchange = renderMake; });
+/* ========== 格納庫 ========== */
+const checked = new Set();
+let dirtyView = true, override = null, curTab = "view";
+const setLog = lines => { $("log").textContent = lines.join("\n"); };
 
-/* ---------- ファイル一覧 ---------- */
-var metas = [], orderOf = Object.create(null), checked = {};
-var dirtyView = true, override = null, curTab = "view";
-function checkedNames() { return metas.filter(function (f) { return checked[f.name]; }).map(function (f) { return f.name; }); }
+function download(name, content) {
+  const url = URL.createObjectURL(new Blob([content], { type: "application/json" }));
+  const a = document.createElement("a"); a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 function updateStat() {
-  var n = 0, c = 0; metas.forEach(function (f) { n += f.n; c += f.chars || 0; });
-  $("stat").textContent = metas.length + "ファイル / " + n.toLocaleString() + "件 / " + c.toLocaleString() + "字　チェック " + checkedNames().length;
+  let big = 0, week = 0;
+  for (const m of metas.values()) { if (m.kind === "big") big++; else week++; }
+  $("stat").textContent = `大${big} / 週${week} / チェック${checked.size}`;
 }
-function flog(s) { $("flog").textContent += s + "\n"; }
-function refresh() {
-  return getMetas().then(function (list) {
-    list.sort(function (a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
-    metas = list; orderOf = Object.create(null);
-    list.forEach(function (f, i) { orderOf[f.name] = i; });
-    Object.keys(checked).forEach(function (n) { if (orderOf[n] === undefined) delete checked[n]; });
-    if (override && orderOf[override] === undefined) override = null;
-    dirtyView = true;
-    renderFiles(); updateStat();
-    if (curTab === "view") ensureView();
-  });
+async function refresh(p) {
+  const list = await getAllMeta();
+  metas = new Map(list.map(m => [m.id, m]));
+  for (const id of [...checked]) if (!metas.has(id)) checked.delete(id);
+  if (override && !metas.has(override)) override = null;
+  dirtyView = true;
+  renderLists(); updateStat();
+  if (curTab === "view") ensureView(p);
 }
-function renderFiles() {
-  var box = $("flist"); box.innerHTML = "";
-  if (!metas.length) { box.textContent = "ファイルがありません。"; return; }
-  metas.forEach(function (f) {
-    var row = mk("div", "frow");
-    var cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = !!checked[f.name];
-    cb.onchange = function () { if (cb.checked) checked[f.name] = true; else delete checked[f.name]; dirtyView = true; updateStat(); };
-    row.appendChild(cb);
-    row.appendChild(mk("div", "info", f.name + "\n" + f.n + "件　" + (f.first ? f.first + " ～ " + f.last : "日時なし")));
-    var del = mk("button", "act danger", "削除");
-    del.onclick = function () {
-      if (!confirm(f.name + " を削除しますか？（元のファイルは消えません）")) return;
-      removeFile(f.name).then(refresh);
-    };
-    row.appendChild(del); box.appendChild(row);
-  });
+function afterCheck() { override = null; dirtyView = true; renderLists(); updateStat(); }
+function setChecked(id, on) {
+  if (on) { for (const c of [...checked]) if (kindOf(c) !== kindOf(id)) checked.delete(c); checked.add(id); }
+  else checked.delete(id);
+  afterCheck();
 }
-$("files").onchange = function (e) {
-  var fl = Array.prototype.slice.call(e.target.files), chain = Promise.resolve();
-  fl.forEach(function (f) {
-    chain = chain.then(function () { return readFile(f); }).then(function (txt) {
-      var p = parseJSON(txt);
-      if (!p.items.length) { flog(f.name + ": 発言を読み取れませんでした（0件）"); return; }
-      var had = orderOf[f.name] !== undefined;
-      return saveFile(f.name, p.items).then(function () { flog(f.name + ": " + p.items.length + "件を取り込み" + (had ? "（同名を置き換え）" : "")); });
-    }).catch(function (err) { flog(f.name + ": エラー " + err.message); });
-  });
-  chain.then(refresh).then(function () { e.target.value = ""; });
-};
-$("selall").onclick = function () { metas.forEach(function (f) { checked[f.name] = true; }); dirtyView = true; renderFiles(); updateStat(); };
-$("selnone").onclick = function () { checked = {}; dirtyView = true; renderFiles(); updateStat(); };
+function visibleMetas(kind) {
+  const f = $("ownerFilter").value;
+  return [...metas.values()].filter(m => m.kind === kind && (!f || m.owner === f)).sort(nameCmp);
+}
+function renderLists() {
+  for (const kind of ["big", "week"]) {
+    const box = $(kind === "big" ? "listBig" : "listWeek"); box.innerHTML = "";
+    const rows = visibleMetas(kind);
+    if (!rows.length) { box.textContent = "なし"; continue; }
+    for (const m of rows) {
+      const row = mk("div", "frow");
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = checked.has(m.id);
+      cb.onchange = () => setChecked(m.id, cb.checked);
+      row.appendChild(cb);
+      row.appendChild(mk("div", "info", `${OWNER_NAME[m.owner]}　${m.name}\n${m.n}件　${m.first ? m.first + " ～ " + m.last : "日時なし"}`));
+      const ex = mk("button", "btn gray", "書き出し");
+      ex.onclick = async () => { try { download(`${m.name}.json`, JSON.stringify(await getBody(m.id), null, 2)); } catch (e) { showErr(e); } };
+      const del = mk("button", "btn red", "削除");
+      del.onclick = async () => {
+        if (!confirm(`${m.name} を削除しますか？（元のJSONには触りません）`)) return;
+        try { await removeFiles([m.id]); setLog([`${m.name} を削除しました。`]); await refresh(); } catch (e) { showErr(e); }
+      };
+      row.appendChild(ex); row.appendChild(del); box.appendChild(row);
+    }
+  }
+  const sum = { big: [0, 0, 0], week: [0, 0, 0] };
+  for (const m of metas.values()) { const s = sum[m.kind]; s[0]++; s[1] += m.n; s[2] += m.chars || 0; }
+  $("total").textContent = `大きなファイル ${sum.big[0]}個 / ${sum.big[1].toLocaleString()}件 / ${sum.big[2].toLocaleString()}字\n週ファイル ${sum.week[0]}個 / ${sum.week[1].toLocaleString()}件 / ${sum.week[2].toLocaleString()}字`;
+}
+$("ownerFilter").onchange = renderLists;
+function selectVisible(kind, on) {
+  if (on) { for (const c of [...checked]) if (kindOf(c) !== kind) checked.delete(c); for (const m of visibleMetas(kind)) checked.add(m.id); }
+  else { for (const c of [...checked]) if (kindOf(c) === kind) checked.delete(c); }
+  afterCheck();
+}
+$("allBig").onclick = () => selectVisible("big", true);
+$("noBig").onclick = () => selectVisible("big", false);
+$("allWeek").onclick = () => selectVisible("week", true);
+$("noWeek").onclick = () => selectVisible("week", false);
 
-/* ---------- 閲覧 ----------
-   発言を150件ずつ、画面の描き直しの合間に並べる（固まらない）。
-   ジャンプ先がまだ描かれていなければ、描画がそこに届くまで待つ。 */
-var viewTok = 0, viewKey = "", viewScroll = 0, heads = [], days = [], keyMap = {}, pending = null, painted = true, rafBusy = false;
-function annotate(msgs, name) {
-  var o = orderOf[name], lastT = 0;
-  msgs.forEach(function (m, i) {
-    var t = timeKey(m.time); if (t === null) t = lastT; else lastT = t;
-    m._t = t; m._f = name; m._seq = i; m._o = o;
-  });
-  return msgs;
+/* 大きなファイルを入れる: 持ち主ごとに重複を除いて1本にまとめ、週ファイルも自動で作る */
+$("inBig").onchange = async e => {
+  const files = [...e.target.files], logs = [], groups = new Map();
+  setLog(["読み込み中…"]);
+  try {
+    for (const f of files) {
+      const owner = ownerOf(f.name);
+      if (!owner) { logs.push(`${f.name}: 持ち主が決まりません。ファイル名を kanae か shiori で始めるか、上の「持ち主」を選んでください。`); continue; }
+      try {
+        const p = parseMsgs(await f.text());
+        if (!groups.has(owner)) groups.set(owner, { n: 0, msgs: [] });
+        const g = groups.get(owner); g.n++; g.msgs.push(...p.msgs);
+        logs.push(`${f.name}: ${p.msgs.length}件を読みました${p.skipped ? `（読めない${p.skipped}要素は無視）` : ""}`);
+      } catch (err) { logs.push(`${f.name}: エラー ${err.message}`); }
+      await tick();
+    }
+    for (const [owner, g] of groups) {
+      const all = sortMsgs(uniq(g.msgs)), dup = g.msgs.length - all.length;
+      if (!all.length) { logs.push(`${OWNER_NAME[owner]}: 発言が0件でした`); continue; }
+      const bigName = `${owner}_big_${rangeName(all)}`, list = [{ kind: "big", name: bigName, owner, msgs: all }];
+      let replaced = metas.has(`big:${bigName}`) ? 1 : 0, weeks = 0;
+      for (const [wk, ms] of splitWeeks(all)) {
+        const name = `${owner}_week_${wk}`;
+        if (metas.has(`week:${name}`)) replaced++;
+        list.push({ kind: "week", name, owner, msgs: ms }); weeks++;
+      }
+      await putFiles(list);
+      logs.push(`${OWNER_NAME[owner]}: ${g.n}ファイル、重複${dup}件を除き${all.length}件。大きなファイル1個と週ファイル${weeks}個を作りました。${replaced ? `（同名${replaced}個を置き換え。置き換えた週ファイルでは、削除済みの発言が戻ります）` : ""}`);
+    }
+    setLog(logs);
+    await refresh();
+  } catch (err) { showErr(err); }
+  e.target.value = "";
+};
+/* 週ファイルを単独で入れる */
+$("inWeek").onchange = async e => {
+  const files = [...e.target.files], logs = [];
+  setLog(["読み込み中…"]);
+  try {
+    for (const f of files) {
+      const owner = ownerOf(f.name);
+      if (!owner) { logs.push(`${f.name}: 持ち主が決まりません。ファイル名を kanae か shiori で始めるか、上の「持ち主」を選んでください。`); continue; }
+      try {
+        const p = parseMsgs(await f.text());
+        if (!p.msgs.length) { logs.push(`${f.name}: 0件でした`); continue; }
+        const base = f.name.replace(/\.json$/i, "");
+        const name = base.toLowerCase().startsWith(owner) ? base : `${owner}_${base}`;
+        const had = metas.has(`week:${name}`);
+        await putFiles([{ kind: "week", name, owner, msgs: sortMsgs(uniq(p.msgs)) }]);
+        logs.push(`${name}: ${p.msgs.length}件を入れました${had ? "（同名を置き換え）" : ""}`);
+      } catch (err) { logs.push(`${f.name}: エラー ${err.message}`); }
+    }
+    setLog(logs);
+    await refresh();
+  } catch (err) { showErr(err); }
+  e.target.value = "";
+};
+
+/* ========== 閲覧 ==========
+   発言を150件ずつ、画面の描き直しの合間に並べる。ジャンプ先がまだ描かれていなければ、描画が届くまで待つ。 */
+let viewTok = 0, viewKey = "", viewScroll = 0, heads = [], days = [], keyMap = new Map(), pending = null, painted = true, rafBusy = false;
+const sel = new Map();
+const viewIds = () => (override ? [override] : [...checked].sort());
+const cmpW = (a, b) => a.t - b.t || a.o - b.o || a.i - b.i;
+const wKey = w => `${w.f}\u0001${w.i}`;
+const fmtMsg = w => `【${w.m.time}】 ${nameOf(w.m.sender, w.ow)}：\n${w.m.text}`;
+
+async function loadWrapped(id, order) {
+  const meta = metas.get(id), ow = meta ? meta.owner : "";
+  return withTimes(await getBody(id)).map(x => ({ m: x.m, f: id, i: x.i, t: x.t, o: order, ow }));
 }
-function viewNames() { return override ? [override] : checkedNames(); }
-function renderView(p) {
-  var tok = ++viewTok, names = viewNames(), box = $("viewer");
-  dirtyView = false; viewKey = names.join("\u0002");
-  heads = []; days = []; keyMap = {}; pending = p || null; painted = false;
-  box.innerHTML = "";
-  $("voverride").classList.toggle("hidden", !override);
-  if (override) $("voname").textContent = "一時表示: " + override;
-  if (!names.length) {
-    box.textContent = "ファイルタブで、読むファイルにチェックを入れてください。";
-    $("vinfo").textContent = ""; painted = true; return;
-  }
+async function renderView(p) {
+  const tok = ++viewTok, ids = viewIds(), box = $("viewer");
+  dirtyView = false; viewKey = ids.join("|");
+  heads = []; days = []; keyMap = new Map(); pending = p || null; painted = false;
+  sel.clear(); updateSel(); box.innerHTML = "";
+  $("ovbar").classList.toggle("hidden", !override);
+  if (override) $("ovname").textContent = "一時表示: " + metas.get(override).name;
+  if (!ids.length) { box.textContent = "格納庫タブで、読むファイルにチェックを入れてください。"; $("vinfo").textContent = ""; painted = true; return; }
   $("vinfo").textContent = "読み込み中…";
-  Promise.all(names.map(function (n) { return getBody(n).then(function (ms) { return annotate(ms, n); }); })).then(function (parts) {
+  try {
+    const parts = await Promise.all(ids.map((id, k) => loadWrapped(id, k)));
     if (tok !== viewTok) return;
-    var list = [].concat.apply([], parts);
-    list.sort(cmpMsg);
-    var set = Object.create(null);
-    list.forEach(function (m) { if (m._t) set[ymd(m._t)] = 1; });
-    days = Object.keys(set).sort();
+    const list = parts.flat().sort(cmpW);
+    const set = new Set();
+    for (const w of list) if (w.t) set.add(ymd(w.t));
+    days = [...set].sort();
     if (days.length) { $("vdate").min = days[0]; $("vdate").max = days[days.length - 1]; }
-    return paint(tok, list, names.length > 1);
-  }).catch(function (err) { $("vinfo").textContent = "エラー: " + err.message; });
+    await paint(tok, list, ids.length > 1);
+  } catch (err) { $("vinfo").textContent = "エラー: " + err.message; }
 }
-function paint(tok, list, multi) {
-  var box = $("viewer"), i = 0, lastDay = null;
-  function status() {
-    $("vinfo").textContent = list.length.toLocaleString() + "件 / " + days.length + "日分" +
-      (i < list.length ? "　描画中 " + i.toLocaleString() + "/" + list.length.toLocaleString() : "");
-  }
-  function step() {
+async function paint(tok, list, multi) {
+  const box = $("viewer");
+  let i = 0, lastDay = null;
+  const status = () => { $("vinfo").textContent = `${list.length.toLocaleString()}件 / ${days.length}日分` + (i < list.length ? `　描画中 ${i.toLocaleString()}/${list.length.toLocaleString()}` : ""); };
+  if (!list.length) { painted = true; status(); return; }
+  while (i < list.length) {
+    await nextFrame();                         // 描き直しを1回挟んでから、次の150件を並べる
     if (tok !== viewTok) return;
-    var frag = document.createDocumentFragment(), end = Math.min(i + CHUNK, list.length);
+    const frag = document.createDocumentFragment(), end = Math.min(i + CHUNK, list.length);
     for (; i < end; i++) {
-      var m = list[i], day = ymd(m._t);
+      const w = list[i], day = ymd(w.t);
       if (day !== lastDay) {
         lastDay = day;
-        if (day) { var h = mk("div", "dayhead", dayLabel(day)); h.setAttribute("data-d", day); heads.push(h); frag.appendChild(h); }
+        if (day) { const h = mk("div", "dayhead", dayLabel(day)); h.setAttribute("data-d", day); heads.push(h); frag.appendChild(h); }
         else frag.appendChild(mk("div", "dayhead", "日付なし"));
       }
-      var e = mk("div", "msg crew-" + (m.crew || "unknown"));
-      e.appendChild(mk("div", "meta", m.time + "　" + m.sender + (m.crew && m.crew !== "captain" ? "（" + m.crew + "）" : "") + (multi ? "　[" + m._f + "]" : "")));
-      e.appendChild(mk("div", "body", m.text));
-      if (m.queries) e.appendChild(mk("div", "qs", "🔎 " + m.queries.join(" ／ ")));
-      keyMap[m._f + "\u0001" + m._seq] = e;
+      const e = mk("div", "msg c-" + crewOf(w.m.sender, w.ow));
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.className = "mcb";
+      cb.onchange = () => { if (cb.checked) sel.set(wKey(w), w); else sel.delete(wKey(w)); updateSel(); };
+      const main = mk("div", "main");
+      main.appendChild(mk("div", "meta", `${w.m.time}　${nameOf(w.m.sender, w.ow)}` + (multi ? `　[${metas.get(w.f).name}]` : "")));
+      main.appendChild(mk("div", "body", w.m.text));
+      e.appendChild(cb); e.appendChild(main);
+      keyMap.set(wKey(w), e);
       frag.appendChild(e);
     }
     box.appendChild(frag);
-    if (i >= list.length) painted = true;
+    painted = i >= list.length;
     status(); checkPending();
-    if (i < list.length) return nextFrame().then(step);
   }
-  return nextFrame().then(step);
 }
 function checkPending() {
   if (!pending) return;
-  var v = $("viewer"), p = pending, el = null, k;
-  if (p.end) {
-    if (painted) { pending = null; v.scrollTop = v.scrollHeight; updateCur(); }
-    return;
-  }
-  if (p.msg) el = keyMap[p.msg];
+  const v = $("viewer"), p = pending;
+  if (p.end) { if (painted) { pending = null; v.scrollTop = v.scrollHeight; updateCur(); } return; }
+  if (p.top != null) { if (painted || v.scrollHeight >= p.top + v.clientHeight) { pending = null; v.scrollTop = p.top; updateCur(); } return; }
+  let el = null;
+  if (p.msg) el = keyMap.get(p.msg);
   else if (p.day) {
-    for (k = 0; k < heads.length; k++) { if (heads[k].getAttribute("data-d") >= p.day) { el = heads[k]; break; } }
+    el = heads.find(h => h.getAttribute("data-d") >= p.day) || null;
     if (!el && painted && heads.length) el = heads[heads.length - 1];
   }
   if (!el) { if (painted) pending = null; return; }
   pending = null;
   v.scrollTop = Math.max(0, el.offsetTop - (p.msg ? 8 : 0));
-  if (p.msg) { el.classList.add("flash"); setTimeout(function () { el.classList.remove("flash"); }, 2500); }
+  if (p.msg) { el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 2500); }
   updateCur();
 }
 function curHead() {
-  var top = $("viewer").scrollTop + 8, lo = 0, hi = heads.length - 1, ans = 0;
-  while (lo <= hi) {
-    var mid = (lo + hi) >> 1;
-    if (heads[mid].offsetTop <= top) { ans = mid; lo = mid + 1; } else hi = mid - 1;
-  }
+  const top = $("viewer").scrollTop + 8;
+  let lo = 0, hi = heads.length - 1, ans = 0;
+  while (lo <= hi) { const mid = (lo + hi) >> 1; if (heads[mid].offsetTop <= top) { ans = mid; lo = mid + 1; } else hi = mid - 1; }
   return ans;
 }
 function updateCur() { if (heads.length) $("vdate").value = heads[curHead()].getAttribute("data-d"); }
 function moveDay(delta) {
   if (!heads.length) return;
-  var i = days.indexOf(heads[curHead()].getAttribute("data-d")) + delta;
+  const h = heads[curHead()];
+  if (delta < 0 && $("viewer").scrollTop > h.offsetTop + 20) delta = 0;   // 日の途中なら、その日の頭へ
+  let i = days.indexOf(h.getAttribute("data-d")) + delta;
   i = Math.max(0, Math.min(days.length - 1, i));
   pending = { day: days[i] }; checkPending();
 }
 function ensureView(p) {
-  var key = viewNames().join("\u0002");
-  if (dirtyView || key !== viewKey) { renderView(p); return; }
-  if (p) { pending = p; checkPending(); }
-  else $("viewer").scrollTop = viewScroll;
+  if (dirtyView || viewIds().join("|") !== viewKey) return renderView(p);
+  if (p) { pending = p; checkPending(); } else $("viewer").scrollTop = viewScroll;
 }
 $("vdate").onchange = function () {
   if (!this.value || !days.length) return;
-  var t = days[days.length - 1];
-  for (var i = 0; i < days.length; i++) { if (days[i] >= this.value) { t = days[i]; break; } }
-  pending = { day: t }; checkPending();
+  pending = { day: days.find(d => d >= this.value) || days[days.length - 1] }; checkPending();
 };
-$("vprev").onclick = function () { moveDay(-1); };
-$("vnext").onclick = function () { moveDay(1); };
-$("vtop").onclick = function () { pending = null; $("viewer").scrollTop = 0; updateCur(); };
-$("vend").onclick = function () { pending = { end: true }; checkPending(); };
-$("viewer").addEventListener("scroll", function () {
+$("vprev").onclick = () => moveDay(-1);
+$("vnext").onclick = () => moveDay(1);
+$("vtop").onclick = () => { pending = null; $("viewer").scrollTop = 0; updateCur(); };
+$("vend").onclick = () => { pending = { end: true }; checkPending(); };
+$("viewer").addEventListener("scroll", () => {
   if (rafBusy) return; rafBusy = true;
-  requestAnimationFrame(function () { rafBusy = false; updateCur(); });
+  requestAnimationFrame(() => { rafBusy = false; updateCur(); });
 });
-$("voback").onclick = function () { override = null; renderView(); };
+$("ovback").onclick = () => { override = null; renderView(); };
 
-/* ---------- 検索 ----------
-   対象ファイルを1ファイルずつ読み、走査し、合間に画面へ制御を返す。 */
-var searchTok = 0;
-function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+/* ---- 発言のコピー・削除 ---- */
+function updateSel() {
+  $("selinfo").textContent = `選択 ${sel.size}件`;
+  for (const id of ["bcopy", "bdel", "bclr"]) $(id).disabled = !sel.size;
+}
+const selMsg = s => { $("selmsg").textContent = s; setTimeout(() => { if ($("selmsg").textContent === s) $("selmsg").textContent = ""; }, 3000); };
+async function copyText(s) {
+  try { await navigator.clipboard.writeText(s); return true; } catch (e) { /* 下の方法へ */ }
+  const ta = document.createElement("textarea"); ta.value = s; ta.style.cssText = "position:fixed;opacity:0";
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch (e) { /* 失敗 */ }
+  ta.remove(); return ok;
+}
+$("bcopy").onclick = async () => {
+  const items = [...sel.values()].sort(cmpW);
+  if (!items.length) return;
+  selMsg((await copyText(items.map(fmtMsg).join("\n\n"))) ? `${items.length}件をコピーしました` : "コピーに失敗しました");
+};
+$("bclr").onclick = () => {
+  sel.clear(); updateSel();
+  for (const cb of document.querySelectorAll("#viewer .mcb")) cb.checked = false;
+};
+$("bdel").onclick = async () => {
+  const items = [...sel.values()];
+  if (!items.length) return;
+  if (!confirm(`${items.length}件を削除しますか？（この格納庫の、いま見ているファイルからだけ消えます。元のJSONには触りません）`)) return;
+  try {
+    const top = $("viewer").scrollTop, byFile = new Map();
+    for (const w of items) { if (!byFile.has(w.f)) byFile.set(w.f, new Set()); byFile.get(w.f).add(w.i); }
+    const list = [];
+    for (const [id, idx] of byFile) {
+      const meta = metas.get(id), msgs = (await getBody(id)).filter((_, i) => !idx.has(i));
+      list.push({ kind: meta.kind, name: meta.name, owner: meta.owner, msgs });
+    }
+    await putFiles(list);
+    await refresh({ top });
+    selMsg(`${items.length}件を削除しました`);
+  } catch (err) { showErr(err); }
+};
+
+/* ========== 検索 ==========
+   ファイルを1つずつ読み、走査し、合間に画面へ制御を返す。 */
+let searchTok = 0;
+const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 function appendHL(parent, text, re) {
-  text.split(re).forEach(function (p, i) {
+  text.split(re).forEach((p, i) => {
     if (i % 2 === 1) parent.appendChild(mk("mark", "", p));
     else if (p) parent.appendChild(document.createTextNode(p));
   });
 }
-function matchMsg(m, terms, withQ) {
-  var s = m.text.toLowerCase();
-  if (withQ && m.queries) s += "\n" + m.queries.join(" ").toLowerCase();
-  for (var i = 0; i < terms.length; i++) { if (s.indexOf(terms[i]) < 0) return false; }
-  return true;
-}
-function doSearch() {
-  var q = $("q").value.trim(); if (!q) return;
-  var tok = ++searchTok, withQ = $("qinc").checked, hits = [], i = 0;
-  var terms = q.toLowerCase().split(/[\s\u3000]+/).filter(Boolean);
-  var re = new RegExp("(" + terms.map(esc).join("|") + ")", "gi");
-  var names = checkedNames(), scope = names.length ? names.length + "ファイル" : "全ファイル";
-  if (!names.length) names = metas.map(function (f) { return f.name; });
+async function doSearch() {
+  const q = $("q").value.trim(); if (!q) return;
+  const tok = ++searchTok, hits = [];
+  const terms = q.toLowerCase().split(/[\s\u3000]+/).filter(Boolean);
+  const re = new RegExp("(" + terms.map(esc).join("|") + ")", "gi");
+  let ids = [...checked].sort(), scope = `チェック${ids.length}個`;
+  if (!ids.length) { ids = [...metas.values()].filter(m => m.kind === "week").map(m => m.id).sort(); scope = "全部の週ファイル"; }
   $("results").innerHTML = "";
-  function next() {
-    if (tok !== searchTok) return;
-    if (i >= names.length) return show();
-    $("hitcount").textContent = "検索中 " + i + "/" + names.length + "ファイル　ヒット " + hits.length + "件";
-    var name = names[i++];
-    return getBody(name).then(function (msgs) {
-      annotate(msgs, name).forEach(function (m) { if (matchMsg(m, terms, withQ)) hits.push(m); });
-      return tick().then(next);
-    });
-  }
-  function show() {
-    hits.sort(cmpMsg);
-    if ($("desc").checked) hits.reverse();
-    $("hitcount").textContent = hits.length.toLocaleString() + "件（対象: " + scope + "）" + (hits.length > LIMIT ? "　先頭 " + LIMIT + "件を表示。語を足すと絞れます" : "");
-    var box = $("results");
-    hits.slice(0, LIMIT).forEach(function (m) {
-      var d = mk("div", "hit");
-      d.appendChild(mk("div", "meta", m.time + "　" + m.sender + (m.crew && m.crew !== "captain" ? "（" + m.crew + "）" : "") + "　[" + m._f + "]"));
-      var sn = mk("div", "snip"), low = m.text.toLowerCase(), idx = low.indexOf(terms[0]); if (idx < 0) idx = 0;
-      var s = Math.max(0, idx - 40), e = Math.min(m.text.length, idx + terms[0].length + 80);
-      appendHL(sn, (s > 0 ? "…" : "") + m.text.slice(s, e) + (e < m.text.length ? "…" : ""), re);
-      d.appendChild(sn);
-      if (m.queries) {
-        var qs = mk("div", "qs"); qs.appendChild(document.createTextNode("🔎 "));
-        if (withQ) appendHL(qs, m.queries.join(" ／ "), re); else qs.appendChild(document.createTextNode(m.queries.join(" ／ ")));
-        d.appendChild(qs);
+  try {
+    for (let k = 0; k < ids.length; k++) {
+      if (tok !== searchTok) return;
+      $("hitcount").textContent = `検索中 ${k}/${ids.length}ファイル　ヒット ${hits.length}件`;
+      for (const w of await loadWrapped(ids[k], k)) {
+        const s = w.m.text.toLowerCase();
+        if (terms.every(t => s.includes(t))) hits.push(w);
       }
-      d.onclick = function () { openFromSearch(m); };
+      await tick();
+    }
+    if (tok !== searchTok) return;
+    hits.sort(cmpW);
+    if ($("desc").checked) hits.reverse();
+    $("hitcount").textContent = `${hits.length.toLocaleString()}件（対象: ${scope}）` + (hits.length > LIMIT ? `　先頭${LIMIT}件を表示。語を足すと絞れます` : "");
+    const box = $("results");
+    for (const w of hits.slice(0, LIMIT)) {
+      const d = mk("div", "hit"), text = w.m.text, low = text.toLowerCase();
+      d.appendChild(mk("div", "meta", `${w.m.time}　${nameOf(w.m.sender, w.ow)}　[${metas.get(w.f).name}]`));
+      let idx = low.indexOf(terms[0]); if (idx < 0) idx = 0;
+      const s = Math.max(0, idx - 40), e = Math.min(text.length, idx + terms[0].length + 80);
+      const sn = mk("div", "snip");
+      appendHL(sn, (s > 0 ? "…" : "") + text.slice(s, e) + (e < text.length ? "…" : ""), re);
+      d.appendChild(sn);
+      d.onclick = () => openFromSearch(w);
       box.appendChild(d);
-    });
-  }
-  next().catch(function (err) { $("hitcount").textContent = "エラー: " + err.message; });
+    }
+  } catch (err) { $("hitcount").textContent = "エラー: " + err.message; }
 }
-function openFromSearch(m) {
-  override = checked[m._f] ? null : m._f;   // チェック内なら今の選択のまま、外なら一時表示
+function openFromSearch(w) {
+  override = checked.has(w.f) ? null : w.f;    // チェック内なら今の選択のまま、外なら一時表示
   showTab("view");
-  ensureView({ msg: m._f + "\u0001" + m._seq });
+  ensureView({ msg: wKey(w) });
 }
 $("go").onclick = doSearch;
-$("q").addEventListener("keydown", function (e) { if (e.key === "Enter") doSearch(); });
+$("q").addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
 
-/* ---------- タブ ---------- */
+/* ========== タブ・起動 ========== */
 function showTab(name) {
   if (curTab === "view") viewScroll = $("viewer").scrollTop;
   curTab = name;
-  Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === name); });
-  ["view", "search", "files", "make"].forEach(function (t) { $("tab-" + t).classList.toggle("hidden", t !== name); });
+  for (const b of document.querySelectorAll("nav button")) b.classList.toggle("on", b.dataset.tab === name);
+  for (const t of ["view", "search", "vault"]) $("tab-" + t).classList.toggle("hidden", t !== name);
 }
-Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) {
-  b.onclick = function () { var n = b.getAttribute("data-tab"); showTab(n); if (n === "view") ensureView(); };
-});
-
-/* ---------- 起動 ---------- */
-if (!window.indexedDB) { $("stat").textContent = "IndexedDBが使えません"; }
-else {
-  openDB().then(function (d) {
-    db = d;
-    if (navigator.storage && navigator.storage.persist) { navigator.storage.persist().catch(function () {}); }
-    return refresh();
-  }).then(function () { if (!metas.length) showTab("files"); })
-    .catch(function (err) { $("stat").textContent = "起動エラー: " + err.message; });
+for (const b of document.querySelectorAll("nav button")) {
+  b.onclick = () => { showTab(b.dataset.tab); if (b.dataset.tab === "view") ensureView(); };
 }
+updateSel();
+(async () => {
+  if (!window.indexedDB) { $("stat").textContent = "IndexedDBが使えません"; return; }
+  try {
+    db = await openDB();
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+    await refresh();
+    if (!metas.size) showTab("vault");
+  } catch (err) { showErr(err); }
+})();
 })();
 </script>
 </body>
