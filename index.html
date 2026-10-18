@@ -6,218 +6,136 @@
 <title>アレクサンドリア</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: sans-serif; background: #f4f4f5; color: #333; font-size: 15px; }
-header { background: #2c3e50; color: #fff; padding: 12px 14px; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; font-weight: bold; }
+html, body { height: 100%; }
+body { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; font-family: sans-serif; background: #f4f4f5; color: #333; font-size: 15px; }
+header { flex: none; background: #2c3e50; color: #fff; padding: 10px 14px; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; font-weight: bold; }
 header .ver { font-size: 11px; font-weight: normal; opacity: .7; }
 header #stat { font-size: 12px; font-weight: normal; opacity: .85; margin-left: auto; }
-nav { display: flex; background: #34495e; }
-nav button { flex: 1; padding: 12px; border: none; background: none; color: #bdc3c7; font-size: 15px; font-weight: bold; }
+nav { flex: none; display: flex; background: #34495e; }
+nav button { flex: 1; padding: 12px 4px; border: none; background: none; color: #bdc3c7; font-size: 15px; font-weight: bold; }
 nav button.on { color: #fff; background: #2980b9; }
-.tab { padding: 12px; max-width: 900px; margin: 0 auto; }
-.hidden { display: none; }
+.tab { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; }
+.hidden { display: none !important; }
 .row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
-input[type=search], input[type=text], select, textarea { padding: 10px; border: 1px solid #95a5a6; border-radius: 5px; font-size: 15px; background: #fff; }
+input[type=search], input[type=date], select { padding: 9px; border: 1px solid #95a5a6; border-radius: 5px; font-size: 15px; background: #fff; }
 input[type=search] { flex: 1; min-width: 160px; }
-textarea { width: 100%; height: 160px; margin: 8px 0; }
-button.act { padding: 10px 16px; border: none; border-radius: 5px; background: #2980b9; color: #fff; font-size: 14px; font-weight: bold; }
+button.act { padding: 9px 14px; border: none; border-radius: 5px; background: #2980b9; color: #fff; font-size: 14px; font-weight: bold; }
 button.act.gray { background: #7f8c8d; }
 button.act.danger { background: #c0392b; }
 button:disabled { opacity: .4; }
-#hitcount { margin: 6px 0; font-size: 13px; color: #555; }
-.hit { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer; }
-.meta { font-size: 12px; color: #777; margin-bottom: 4px; }
-.snip, .body { white-space: pre-wrap; line-height: 1.6; word-break: break-all; }
-mark { background: #ffe58f; padding: 0 1px; }
-.ctx { margin-top: 10px; border-top: 2px solid #2980b9; padding-top: 8px; cursor: default; }
-.msg { padding: 8px; margin: 6px 0; border-radius: 5px; background: #f7f9fb; border-left: 4px solid #dfe4ea; }
-.msg.cur { background: #fff8e1; border-left-color: #f39c12; }
-.srcrow { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; gap: 10px; align-items: center; }
-.srcrow .info { flex: 1; font-size: 13px; line-height: 1.5; word-break: break-all; }
-pre#log { background: #2c3e50; color: #ecf0f1; padding: 10px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap; font-size: 12px; min-height: 40px; }
 p.note { font-size: 13px; color: #555; margin: 8px 0; line-height: 1.6; }
+pre.log { background: #2c3e50; color: #ecf0f1; padding: 10px; border-radius: 5px; margin: 8px 0; white-space: pre-wrap; font-size: 12px; min-height: 20px; }
+pre.log:empty { display: none; }
+#tab-view { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+#vbar { flex: none; padding: 8px 12px; background: #ecf0f1; border-bottom: 1px solid #bdc3c7; }
+#vinfo { font-size: 12px; color: #555; }
+#viewer { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; position: relative; background: #fff; }
+.dayhead { margin: 18px 0 8px; padding: 6px 10px; background: #2c3e50; color: #fff; border-radius: 4px; font-weight: bold; font-size: 13px; }
+.msg { padding: 8px 10px; margin: 6px 0; border-radius: 5px; background: #f7f9fb; border-left: 4px solid #95a5a6; }
+.msg.crew-captain { border-left-color: #2980b9; }
+.msg.crew-kanae { border-left-color: #e67e22; }
+.msg.crew-shiori { border-left-color: #27ae60; }
+.msg.flash { background: #fff3cd; }
+.meta { font-size: 12px; color: #777; margin-bottom: 4px; }
+.body { white-space: pre-wrap; line-height: 1.7; word-break: break-all; }
+.qs { margin-top: 6px; font-size: 12px; color: #7f8c8d; word-break: break-all; }
+.frow { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.frow input[type=checkbox] { width: 20px; height: 20px; flex: none; }
+.frow .info { flex: 1; min-width: 140px; font-size: 13px; line-height: 1.5; word-break: break-all; white-space: pre-wrap; }
+.hit { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer; }
+.snip { white-space: pre-wrap; line-height: 1.6; word-break: break-all; }
+mark { background: #ffe58f; padding: 0 1px; }
+#hitcount { margin: 6px 0; font-size: 13px; color: #555; }
 </style>
 </head>
 <body>
-<header><span>アレクサンドリア</span><span class="ver">版 20261018-1</span><span id="stat"></span></header>
+<header><span>アレクサンドリア</span><span class="ver">版 20261018-3</span><span id="stat"></span></header>
 <nav>
-  <button data-tab="search" class="on">検索</button>
-  <button data-tab="import">取り込み</button>
-  <button data-tab="manage">管理</button>
+  <button data-tab="view" class="on">閲覧</button>
+  <button data-tab="search">検索</button>
+  <button data-tab="files">ファイル</button>
+  <button data-tab="make">作る</button>
 </nav>
 
-<section id="tab-search" class="tab">
+<section id="tab-view" class="tab">
+  <div id="vbar">
+    <div class="row" style="margin-bottom:6px">
+      <input type="date" id="vdate">
+      <button class="act gray" id="vprev">◀ 前の日</button>
+      <button class="act gray" id="vnext">次の日 ▶</button>
+      <button class="act gray" id="vtop">先頭</button>
+      <button class="act gray" id="vend">末尾</button>
+    </div>
+    <div id="vinfo"></div>
+    <div id="voverride" class="row hidden" style="margin:6px 0 0">
+      <span id="voname" style="font-size:12px"></span>
+      <button class="act" id="voback">チェックの選択に戻る</button>
+    </div>
+  </div>
+  <div id="viewer"></div>
+</section>
+
+<section id="tab-search" class="tab hidden">
   <div class="row">
     <input id="q" type="search" placeholder="語（空白区切りでAND）">
     <button id="go" class="act">検索</button>
   </div>
   <div class="row">
-    <select id="f-src"><option value="">全ソース</option></select>
-    <select id="f-snd"><option value="">全発言者</option></select>
     <label><input type="checkbox" id="desc"> 新しい順</label>
+    <label><input type="checkbox" id="qinc"> 検索ワードも対象にする</label>
   </div>
   <div id="hitcount"></div>
   <div id="results"></div>
 </section>
 
-<section id="tab-import" class="tab hidden">
-  <p class="note">.json（船の搬出・このアプリのバックアップ）と、.txt（【日時】 発言者： の形のコピー）を読み取ります。複数選択できます。同じ名前のファイルは、そのソースを置き換えます。</p>
+<section id="tab-files" class="tab hidden">
+  <p class="note">「作る」で書き出したJSONを取り込みます。複数選択できます。同じ名前は置き換えます。チェックしたファイルが、閲覧と検索の対象です。検索は、チェックが0個なら全ファイルが対象です。</p>
   <input type="file" id="files" multiple>
-  <hr style="margin:16px 0">
-  <input type="text" id="paste-name" placeholder="ソース名（空なら自動）" style="width:100%">
-  <textarea id="paste-text" placeholder="ここに貼り付け"></textarea>
-  <button id="paste-go" class="act">貼り付けを取り込む</button>
-  <pre id="log"></pre>
+  <pre class="log" id="flog"></pre>
+  <div class="row" style="margin-top:8px">
+    <button class="act gray" id="selall">全選択</button>
+    <button class="act gray" id="selnone">全解除</button>
+  </div>
+  <div id="flist"></div>
 </section>
 
-<section id="tab-manage" class="tab hidden">
-  <div id="srclist"></div>
-  <div class="row" style="margin-top:12px">
-    <button id="export" class="act">全件をJSONで書き出し</button>
-    <button id="clear" class="act danger">全消去</button>
+<section id="tab-make" class="tab hidden">
+  <p class="note">旧ファイル（船の搬出JSON）を選びます。読むだけで、元のファイルは書き換えません。読み込んだ分は、ページを閉じると消えます。各ファイルの「AIの発言」は、そのファイルでAIが誰だったかを選びます。</p>
+  <input type="file" id="mk-files" multiple>
+  <div class="row" style="margin-top:8px"><button class="act gray" id="mk-clear">読み込みを空にする</button></div>
+  <pre class="log" id="mk-log"></pre>
+  <div id="mk-src" style="margin-top:8px"></div>
+  <pre class="log" id="mk-sum"></pre>
+  <div class="row">
+    <label><input type="radio" name="mode" value="all" checked> 全部を1本</label>
+    <label><input type="radio" name="mode" value="week"> 週ごと（日曜始まり）</label>
   </div>
-  <p class="note">復元は、取り込みタブでバックアップJSONを選びます。正本はログファイルです。ここは検索用の写しです。</p>
+  <div id="mk-out"></div>
+  <p class="note">書き出したファイルの先頭に、18か19を手でつけてください。アプリは番号に触れません。</p>
 </section>
 
 <script>
 (function () {
 "use strict";
-var VERSION = "20261018-1";
-var DB_NAME = "alexandria", STORE = "msgs";
-var LIMIT = 200;
-var db = null, all = [], bySrc = {};
+var VERSION = "20261018-3", DB_NAME = "alexandria3", FORMAT_V = 2;
+var CHUNK = 150, LIMIT = 300;
+/* 発言者名 → crew。ここだけ直せば対応表を変えられる。
+   senderが「AI」のときは、作る工程のファイルごとの選択で決める */
+var CREW_MAP = [[/^船長$/, "captain"], [/かなえ/, "kanae"], [/ソネット|栞/, "shiori"]];
+var AI_SENDER = /^ai$/i;
+var WD = ["日", "月", "火", "水", "木", "金", "土"];
 
 function $(id) { return document.getElementById(id); }
-function log(s) { $("log").textContent += s + "\n"; }
-function btn(label, fn, cls) {
-  var b = document.createElement("button");
-  b.className = "act " + (cls || "gray"); b.textContent = label; b.onclick = fn; return b;
-}
-function stamp() {
-  var d = new Date();
-  function p(n) { return ("0" + n).slice(-2); }
-  return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + p(d.getHours()) + p(d.getMinutes());
-}
-function downloadText(name, content, mime) {
+function pad(n) { return ("0" + n).slice(-2); }
+function mk(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function nextFrame() { return new Promise(function (r) { requestAnimationFrame(function () { r(); }); }); }
+function tick() { return new Promise(function (r) { setTimeout(r, 0); }); }
+function download(name, content, mime) {
   var url = URL.createObjectURL(new Blob([content], { type: mime || "text/plain;charset=utf-8" }));
-  var a = document.createElement("a");
-  a.href = url; a.download = name;
+  var a = document.createElement("a"); a.href = url; a.download = name;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
 }
-
-/* ---------- IndexedDB ---------- */
-function openDB() {
-  return new Promise(function (res, rej) {
-    var r = indexedDB.open(DB_NAME, 1);
-    r.onupgradeneeded = function () {
-      var s = r.result.createObjectStore(STORE, { keyPath: "id", autoIncrement: true });
-      s.createIndex("src", "src", { unique: false });
-    };
-    r.onsuccess = function () { res(r.result); };
-    r.onerror = function () { rej(r.error); };
-  });
-}
-function loadAll() {
-  return new Promise(function (res, rej) {
-    var r = db.transaction(STORE, "readonly").objectStore(STORE).getAll();
-    r.onsuccess = function () { res(r.result); };
-    r.onerror = function () { rej(r.error); };
-  });
-}
-function replaceSource(src, recs) {
-  return new Promise(function (res, rej) {
-    var t = db.transaction(STORE, "readwrite"), st = t.objectStore(STORE);
-    var kr = st.index("src").getAllKeys(IDBKeyRange.only(src));
-    kr.onsuccess = function () {
-      kr.result.forEach(function (k) { st.delete(k); });
-      recs.forEach(function (r) { st.add(r); });
-    };
-    t.oncomplete = function () { res(); };
-    t.onerror = t.onabort = function () { rej(t.error || new Error("保存に失敗")); };
-  });
-}
-function clearAll() {
-  return new Promise(function (res, rej) {
-    var t = db.transaction(STORE, "readwrite");
-    t.objectStore(STORE).clear();
-    t.oncomplete = function () { res(); };
-    t.onerror = t.onabort = function () { rej(t.error); };
-  });
-}
-function rebuild(list) {
-  all = list; bySrc = {};
-  all.forEach(function (r) {
-    r._l = r.text.toLowerCase();
-    (bySrc[r.src] = bySrc[r.src] || []).push(r);
-  });
-  Object.keys(bySrc).forEach(function (s) {
-    bySrc[s].sort(function (a, b) { return a.seq - b.seq; });
-    bySrc[s].forEach(function (r, i) { r._pos = i; });
-  });
-}
-function refresh() {
-  return loadAll().then(function (list) { rebuild(list); refreshUI(); });
-}
-
-/* ---------- 読み取り ---------- */
-var HEAD = /^【([^】]+)】\s*([^：:\n]{1,40}?)\s*[：:]\s*$/;
-function parseText(text) {
-  var lines = String(text).replace(/\r\n?/g, "\n").split("\n");
-  var items = [], cur = null, skipped = 0;
-  lines.forEach(function (ln) {
-    var m = ln.match(HEAD);
-    if (m) {
-      if (cur) items.push(cur);
-      cur = { time: m[1].trim(), sender: m[2].trim(), lines: [] };
-    } else if (cur) {
-      cur.lines.push(ln);
-    } else if (ln.trim() !== "") {
-      skipped++;
-    }
-  });
-  if (cur) items.push(cur);
-  items.forEach(function (it) {
-    var ls = it.lines;
-    while (ls.length && ls[ls.length - 1].trim() === "") ls.pop();
-    if (ls.length && /^\s*-{3,}\s*$/.test(ls[ls.length - 1])) {
-      ls.pop();
-      while (ls.length && ls[ls.length - 1].trim() === "") ls.pop();
-    }
-    while (ls.length && ls[0].trim() === "") ls.shift();
-    it.text = ls.join("\n");
-    delete it.lines;
-  });
-  return { items: items, skipped: skipped };
-}
-function timeKey(s) {
-  var m = String(s || "").match(/(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})\D+(\d{1,2}):(\d{2})/);
-  if (!m) return null;
-  return (+m[1]) * 1e8 + (+m[2]) * 1e6 + (+m[3]) * 1e4 + (+m[4]) * 100 + (+m[5]);
-}
-function parseAny(text) {
-  var t = String(text).replace(/^\uFEFF/, "").trim();
-  if (t[0] === "[" || t[0] === "{") {
-    try {
-      var o = JSON.parse(t);
-      if (Array.isArray(o)) {
-        return {
-          kind: "ship", skipped: 0,
-          items: o.filter(function (x) { return x && typeof x.text === "string"; })
-                  .map(function (x) { return { sender: String(x.sender || "?"), time: String(x.time || ""), text: x.text }; })
-        };
-      }
-      if (o && o.app === "alexandria" && Array.isArray(o.msgs)) return { kind: "backup", msgs: o.msgs };
-    } catch (e) { /* テキストとして読む */ }
-  }
-  var p = parseText(t); p.kind = "text"; return p;
-}
-function toRecs(src, items) {
-  return items.map(function (it, i) {
-    return { src: src, seq: i, sender: it.sender, time: it.time, t: timeKey(it.time), text: it.text };
-  });
-}
-
-/* ---------- 取り込み ---------- */
 function readFile(file) {
   return new Promise(function (res, rej) {
     var fr = new FileReader();
@@ -226,197 +144,447 @@ function readFile(file) {
     fr.readAsText(file);
   });
 }
-function importOne(name, text) {
-  var p = parseAny(text);
-  if (p.kind === "backup") {
-    var groups = {};
-    p.msgs.forEach(function (m) { (groups[m.src] = groups[m.src] || []).push(m); });
-    var names = Object.keys(groups), chain = Promise.resolve();
-    names.forEach(function (s) {
-      chain = chain.then(function () {
-        var arr = groups[s].sort(function (a, b) { return a.seq - b.seq; });
-        var recs = arr.map(function (m, i) {
-          return { src: s, seq: i, sender: m.sender, time: m.time, t: timeKey(m.time), text: m.text };
-        });
-        return replaceSource(s, recs).then(function () { log(name + " → " + s + ": " + recs.length + "件を復元"); });
-      });
+function crewOf(sender, aiCrew) {
+  if (AI_SENDER.test(sender)) return aiCrew || "unknown";
+  for (var i = 0; i < CREW_MAP.length; i++) { if (CREW_MAP[i][0].test(sender)) return CREW_MAP[i][1]; }
+  return "unknown";
+}
+
+/* ---------- 時刻 ---------- */
+function timeKey(s) {
+  var m = String(s || "").match(/(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})\D+(\d{1,2}):(\d{2})/);
+  return m ? (+m[1]) * 1e8 + (+m[2]) * 1e6 + (+m[3]) * 1e4 + (+m[4]) * 100 + (+m[5]) : null;
+}
+function ymd(t) { return t ? Math.floor(t / 1e8) + "-" + pad(Math.floor(t / 1e6) % 100) + "-" + pad(Math.floor(t / 1e4) % 100) : ""; }
+function dayLabel(day) {
+  var p = day.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
+  return p[0] + "/" + p[1] + "/" + p[2] + "(" + WD[d.getDay()] + ")";
+}
+function weekKey(t) {
+  if (!t) return "undated";
+  var d = new Date(Math.floor(t / 1e8), Math.floor(t / 1e6) % 100 - 1, Math.floor(t / 1e4) % 100);
+  d.setDate(d.getDate() - d.getDay());
+  return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate());
+}
+function cmpMsg(a, b) { return (a._t - b._t) || (a._o - b._o) || (a._seq - b._seq); }
+
+/* ---------- 読み取り（JSONのみ） ---------- */
+function queriesFrom(th) {
+  var out = [];
+  th.split("\n").forEach(function (ln) {
+    var m = ln.match(/^\s*\[検索\]\s*(.+)$/); if (!m) return;
+    var q = m[1].trim();
+    try { var o = JSON.parse(q); if (o && typeof o.query === "string") q = o.query; } catch (e) { /* 生の文字列のまま */ }
+    if (q) out.push(q);
+  });
+  return out;
+}
+function normalize(raw) {
+  var o = {};
+  Object.keys(raw).forEach(function (k) { o[k] = raw[k]; });
+  var th = o.thinking; delete o.thinking;
+  var qs = Array.isArray(o.queries) ? o.queries.map(String) : [];
+  if (typeof th === "string") queriesFrom(th).forEach(function (q) { if (qs.indexOf(q) < 0) qs.push(q); });
+  if (qs.length) o.queries = qs; else delete o.queries;
+  o.sender = String(o.sender == null ? "?" : o.sender);
+  o.time = String(o.time == null ? "" : o.time);
+  o.text = String(o.text);
+  return o;
+}
+function parseJSON(text) {
+  var arr = JSON.parse(String(text).replace(/^\uFEFF/, "").trim());
+  if (!Array.isArray(arr)) throw new Error("配列ではありません");
+  var items = [];
+  arr.forEach(function (x) { if (x && typeof x === "object" && typeof x.text === "string") items.push(normalize(x)); });
+  return { items: items, skipped: arr.length - items.length };
+}
+
+/* ---------- IndexedDB ----------
+   meta: 名前・件数・期間（軽い。起動時はこれだけ読む）
+   body: 発言の配列（重い。必要なファイルだけ、必要なときに読む） */
+var db = null;
+function reqP(r) { return new Promise(function (res, rej) { r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
+function txDone(t) { return new Promise(function (res, rej) { t.oncomplete = function () { res(); }; t.onerror = t.onabort = function () { rej(t.error || new Error("DBの書き込みに失敗")); }; }); }
+function openDB() {
+  return new Promise(function (res, rej) {
+    var r = indexedDB.open(DB_NAME, 1);
+    r.onupgradeneeded = function () {
+      r.result.createObjectStore("meta", { keyPath: "name" });
+      r.result.createObjectStore("body", { keyPath: "name" });
+    };
+    r.onsuccess = function () { res(r.result); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+function getMetas() { return reqP(db.transaction("meta", "readonly").objectStore("meta").getAll()); }
+function getBody(name) { return reqP(db.transaction("body", "readonly").objectStore("body").get(name)).then(function (r) { return r ? r.msgs : []; }); }
+function saveFile(name, msgs) {
+  var first = null, last = null, chars = 0;
+  msgs.forEach(function (m) { chars += m.text.length; if (m.time) { if (first === null) first = m.time; last = m.time; } });
+  var t = db.transaction(["meta", "body"], "readwrite");
+  t.objectStore("meta").put({ name: name, n: msgs.length, chars: chars, first: first, last: last });
+  t.objectStore("body").put({ name: name, msgs: msgs });
+  return txDone(t);
+}
+function removeFile(name) {
+  var t = db.transaction(["meta", "body"], "readwrite");
+  t.objectStore("meta").delete(name); t.objectStore("body").delete(name);
+  return txDone(t);
+}
+
+/* ---------- 作る工程 ---------- */
+var srcFiles = [], merged = [], mkLines = [];
+function mkLog(s) { mkLines.push(s); $("mk-log").textContent = mkLines.join("\n"); }
+function buildMerged() {
+  var seen = Object.create(null), out = [], dup = 0, unk = {}, qn = 0;
+  srcFiles.forEach(function (sf, fi) {
+    var lastT = 0;
+    sf.items.forEach(function (it, i) {
+      var t = timeKey(it.time); if (t === null) t = lastT; else lastT = t;
+      var key = it.time + "\u0001" + it.sender + "\u0001" + it.text;
+      if (seen[key]) { dup++; return; }
+      seen[key] = 1;
+      var o = {};
+      Object.keys(it).forEach(function (k) { o[k] = it[k]; });
+      if (!o.crew) o.crew = crewOf(o.sender, sf.ai);
+      if (o.crew === "unknown") unk[o.sender] = (unk[o.sender] || 0) + 1;
+      if (o.queries) qn += o.queries.length;
+      o.v = FORMAT_V;
+      o._t = t; o._o = fi; o._s = i;
+      out.push(o);
     });
-    return chain;
+  });
+  out.sort(function (a, b) { return (a._t - b._t) || (a._o - b._o) || (a._s - b._s); });
+  merged = out;
+  var un = Object.keys(unk), s = "";
+  if (out.length) {
+    s = "重複 " + dup + "件を捨て、" + out.length + "件を時系列に並べました。検索ワード " + qn + "個。\n";
+    s += un.length ? "crewが unknown: " + un.map(function (n) { return n + "(" + unk[n] + ")"; }).join("、") : "crewが unknown の発言はありません。";
   }
-  if (!p.items.length) { log(name + ": 発言を読み取れませんでした（0件）"); return Promise.resolve(); }
-  var old = bySrc[name];
-  if (old && p.items.length < old.length) {
-    if (!confirm(name + " は既に " + old.length + "件あります。新しい版は " + p.items.length + "件です。置き換えますか？")) {
-      log(name + ": 取り込みを中止しました"); return Promise.resolve();
-    }
+  $("mk-sum").textContent = s;
+  renderMake();
+}
+function toJSON(arr) { return JSON.stringify(arr, function (k, v) { return k.charAt(0) === "_" ? undefined : v; }, 2); }
+function rangeName() {
+  var f = null, l = null;
+  merged.forEach(function (m) { if (m._t) { if (f === null) f = m._t; l = m._t; } });
+  function d8(t) { return t ? ymd(t).replace(/-/g, "") : "undated"; }
+  return d8(f) + "-" + d8(l);
+}
+function renderMake() {
+  var box = $("mk-out"); box.innerHTML = "";
+  if (!merged.length) return;
+  var week = document.querySelector("input[name=mode]:checked").value === "week";
+  if (!week) {
+    var b = mk("button", "act", "全部を1本で書き出し（" + merged.length + "件）");
+    b.onclick = function () { download("all_" + rangeName() + ".json", toJSON(merged), "application/json"); };
+    var r0 = mk("div", "row"); r0.appendChild(b); box.appendChild(r0);
+    return;
   }
-  return replaceSource(name, toRecs(name, p.items)).then(function () {
-    log(name + ": " + p.items.length + "件" + (old ? "（同名のソースを置き換え）" : "") +
-        (p.skipped ? "、ヘッダー前の " + p.skipped + "行は無視" : ""));
+  var groups = {}, keys = [];
+  merged.forEach(function (m) { var k = weekKey(m._t); if (!groups[k]) { groups[k] = []; keys.push(k); } groups[k].push(m); });
+  keys.sort();
+  box.appendChild(mk("p", "note", "週ごと（日曜始まり、0時区切り）: " + keys.length + "週。1つずつ書き出します。"));
+  keys.forEach(function (k) {
+    var b = mk("button", "act gray", "week_" + k + ".json（" + groups[k].length + "件）");
+    b.onclick = function () { download("week_" + k + ".json", toJSON(groups[k]), "application/json"); };
+    var r = mk("div", "row"); r.appendChild(b); box.appendChild(r);
   });
 }
-
-/* ---------- 検索 ---------- */
-function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
-function appendHL(parent, text, re) {
-  var parts = text.split(re);
-  parts.forEach(function (p, i) {
-    if (i % 2 === 1) {
-      var m = document.createElement("mark"); m.textContent = p; parent.appendChild(m);
-    } else if (p) {
-      parent.appendChild(document.createTextNode(p));
-    }
-  });
-}
-function cmp(a, b) {
-  var ta = a.t == null ? Infinity : a.t, tb = b.t == null ? Infinity : b.t;
-  if (ta !== tb) return ta < tb ? -1 : 1;
-  if (a.src !== b.src) return a.src < b.src ? -1 : 1;
-  return a.seq - b.seq;
-}
-function doSearch() {
-  var q = $("q").value.trim();
-  if (!q) return;
-  var terms = q.toLowerCase().split(/[\s\u3000]+/).filter(Boolean);
-  var srcSel = $("f-src").value, sndSel = $("f-snd").value;
-  var hits = all.filter(function (r) {
-    if (srcSel && r.src !== srcSel) return false;
-    if (sndSel && r.sender !== sndSel) return false;
-    for (var i = 0; i < terms.length; i++) { if (r._l.indexOf(terms[i]) < 0) return false; }
-    return true;
-  });
-  hits.sort(cmp);
-  if ($("desc").checked) hits.reverse();
-  var re = new RegExp("(" + terms.map(esc).join("|") + ")", "gi");
-  renderHits(hits, terms, re);
-}
-function renderHits(hits, terms, re) {
-  var box = $("results"); box.innerHTML = "";
-  $("hitcount").textContent = hits.length + "件" + (hits.length > LIMIT ? "（先頭 " + LIMIT + "件を表示。語を足すと絞れます）" : "");
-  hits.slice(0, LIMIT).forEach(function (r) {
-    var d = document.createElement("div"); d.className = "hit";
-    var meta = document.createElement("div"); meta.className = "meta";
-    meta.textContent = (r.time || "日時なし") + "　" + r.sender + "　[" + r.src + "]";
-    var sn = document.createElement("div"); sn.className = "snip";
-    var idx = r._l.indexOf(terms[0]); if (idx < 0) idx = 0;
-    var s = Math.max(0, idx - 40), e = Math.min(r.text.length, idx + terms[0].length + 80);
-    appendHL(sn, (s > 0 ? "…" : "") + r.text.slice(s, e) + (e < r.text.length ? "…" : ""), re);
-    d.appendChild(meta); d.appendChild(sn);
-    d.onclick = function () { toggleCtx(d, r, re); };
-    box.appendChild(d);
-  });
-}
-function toggleCtx(d, r, re) {
-  var ex = d.querySelector(".ctx");
-  if (ex) { d.removeChild(ex); return; }
-  var ctx = document.createElement("div"); ctx.className = "ctx";
-  ctx.onclick = function (ev) { ev.stopPropagation(); };
-  var arr = bySrc[r.src];
-  var a = Math.max(0, r._pos - 5), b = Math.min(arr.length - 1, r._pos + 5);
-  function draw() {
-    ctx.innerHTML = "";
-    var up = btn("↑ さらに前5件", function () { a = Math.max(0, a - 5); draw(); });
-    up.disabled = (a === 0); ctx.appendChild(up);
-    for (var i = a; i <= b; i++) {
-      var m = arr[i];
-      var e = document.createElement("div"); e.className = "msg" + (i === r._pos ? " cur" : "");
-      var h = document.createElement("div"); h.className = "meta"; h.textContent = (m.time || "") + "　" + m.sender;
-      var t = document.createElement("div"); t.className = "body"; appendHL(t, m.text, re);
-      e.appendChild(h); e.appendChild(t); ctx.appendChild(e);
-    }
-    var dn = btn("↓ さらに後5件", function () { b = Math.min(arr.length - 1, b + 5); draw(); });
-    dn.disabled = (b === arr.length - 1); ctx.appendChild(dn);
-  }
-  draw(); d.appendChild(ctx);
-}
-
-/* ---------- 画面 ---------- */
-function refreshUI() {
-  var chars = 0; all.forEach(function (r) { chars += r.text.length; });
-  $("stat").textContent = all.length.toLocaleString() + "件 / " + chars.toLocaleString() + "字";
-
-  var srcs = Object.keys(bySrc).sort();
-  var senders = {}; all.forEach(function (r) { senders[r.sender] = 1; });
-  fillSelect($("f-src"), "全ソース", srcs);
-  fillSelect($("f-snd"), "全発言者", Object.keys(senders).sort());
-
-  var list = $("srclist"); list.innerHTML = "";
-  if (!srcs.length) { list.textContent = "ソースがありません。取り込みタブから追加してください。"; return; }
-  srcs.forEach(function (s) {
-    var arr = bySrc[s], first = null, last = null;
-    arr.forEach(function (r) { if (r.time) { if (first === null) first = r.time; last = r.time; } });
-    var row = document.createElement("div"); row.className = "srcrow";
-    var info = document.createElement("div"); info.className = "info";
-    info.textContent = s + "\n" + arr.length + "件　" + (first ? first + " ～ " + last : "日時なし");
-    info.style.whiteSpace = "pre-wrap";
-    row.appendChild(info);
-    row.appendChild(btn("削除", function () {
-      if (!confirm(s + " を削除しますか？（元のログファイルは消えません）")) return;
-      replaceSource(s, []).then(refresh);
-    }, "danger"));
-    list.appendChild(row);
-  });
-}
-function fillSelect(sel, firstLabel, values) {
-  var cur = sel.value;
-  sel.innerHTML = "";
-  var o0 = document.createElement("option"); o0.value = ""; o0.textContent = firstLabel; sel.appendChild(o0);
-  values.forEach(function (v) {
-    var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o);
-  });
-  sel.value = values.indexOf(cur) >= 0 ? cur : "";
-}
-
-/* ---------- イベント ---------- */
-document.querySelectorAll("nav button").forEach(function (b) {
-  b.onclick = function () {
-    document.querySelectorAll("nav button").forEach(function (x) { x.classList.toggle("on", x === b); });
-    ["search", "import", "manage"].forEach(function (t) {
-      $("tab-" + t).classList.toggle("hidden", t !== b.getAttribute("data-tab"));
+function renderSrc() {
+  var box = $("mk-src"); box.innerHTML = "";
+  srcFiles.forEach(function (sf, idx) {
+    var row = mk("div", "frow");
+    row.appendChild(mk("div", "info", sf.name + "\n" + sf.items.length + "件"));
+    var sel = document.createElement("select");
+    [["", "AIの発言: 未設定"], ["kanae", "AIの発言: kanae"], ["shiori", "AIの発言: shiori"]].forEach(function (o) {
+      var op = mk("option", "", o[1]); op.value = o[0]; sel.appendChild(op);
     });
-  };
-});
-$("go").onclick = doSearch;
-$("q").addEventListener("keydown", function (e) { if (e.key === "Enter") doSearch(); });
+    sel.value = sf.ai;
+    sel.onchange = function () { sf.ai = sel.value; buildMerged(); };
+    var del = mk("button", "act danger", "外す");
+    del.onclick = function () { srcFiles.splice(idx, 1); renderSrc(); buildMerged(); };
+    row.appendChild(sel); row.appendChild(del); box.appendChild(row);
+  });
+}
+$("mk-files").onchange = function (e) {
+  var fl = Array.prototype.slice.call(e.target.files), chain = Promise.resolve();
+  fl.forEach(function (f) {
+    chain = chain.then(function () { return readFile(f); }).then(function (txt) {
+      var p = parseJSON(txt), idx = -1;
+      srcFiles.forEach(function (s, i) { if (s.name === f.name) idx = i; });
+      var rec = { name: f.name, items: p.items, ai: idx >= 0 ? srcFiles[idx].ai : "" };
+      if (idx >= 0) srcFiles[idx] = rec; else srcFiles.push(rec);
+      mkLog(f.name + ": " + p.items.length + "件" + (p.skipped ? "（読み取れない " + p.skipped + "要素は無視）" : "") + (idx >= 0 ? "（同名を置き換え）" : ""));
+    }).catch(function (err) { mkLog(f.name + ": エラー " + err.message); });
+  });
+  chain.then(function () { e.target.value = ""; renderSrc(); buildMerged(); });
+};
+$("mk-clear").onclick = function () {
+  srcFiles = []; merged = []; mkLines = [];
+  $("mk-log").textContent = ""; renderSrc(); buildMerged();
+};
+Array.prototype.forEach.call(document.querySelectorAll("input[name=mode]"), function (r) { r.onchange = renderMake; });
 
+/* ---------- ファイル一覧 ---------- */
+var metas = [], orderOf = Object.create(null), checked = {};
+var dirtyView = true, override = null, curTab = "view";
+function checkedNames() { return metas.filter(function (f) { return checked[f.name]; }).map(function (f) { return f.name; }); }
+function updateStat() {
+  var n = 0, c = 0; metas.forEach(function (f) { n += f.n; c += f.chars || 0; });
+  $("stat").textContent = metas.length + "ファイル / " + n.toLocaleString() + "件 / " + c.toLocaleString() + "字　チェック " + checkedNames().length;
+}
+function flog(s) { $("flog").textContent += s + "\n"; }
+function refresh() {
+  return getMetas().then(function (list) {
+    list.sort(function (a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+    metas = list; orderOf = Object.create(null);
+    list.forEach(function (f, i) { orderOf[f.name] = i; });
+    Object.keys(checked).forEach(function (n) { if (orderOf[n] === undefined) delete checked[n]; });
+    if (override && orderOf[override] === undefined) override = null;
+    dirtyView = true;
+    renderFiles(); updateStat();
+    if (curTab === "view") ensureView();
+  });
+}
+function renderFiles() {
+  var box = $("flist"); box.innerHTML = "";
+  if (!metas.length) { box.textContent = "ファイルがありません。"; return; }
+  metas.forEach(function (f) {
+    var row = mk("div", "frow");
+    var cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = !!checked[f.name];
+    cb.onchange = function () { if (cb.checked) checked[f.name] = true; else delete checked[f.name]; dirtyView = true; updateStat(); };
+    row.appendChild(cb);
+    row.appendChild(mk("div", "info", f.name + "\n" + f.n + "件　" + (f.first ? f.first + " ～ " + f.last : "日時なし")));
+    var del = mk("button", "act danger", "削除");
+    del.onclick = function () {
+      if (!confirm(f.name + " を削除しますか？（元のファイルは消えません）")) return;
+      removeFile(f.name).then(refresh);
+    };
+    row.appendChild(del); box.appendChild(row);
+  });
+}
 $("files").onchange = function (e) {
-  var files = Array.prototype.slice.call(e.target.files);
-  var chain = Promise.resolve();
-  files.forEach(function (f) {
-    chain = chain.then(function () { return readFile(f); })
-      .then(function (txt) { return importOne(f.name, txt); })
-      .catch(function (err) { log(f.name + ": エラー " + err.message); });
+  var fl = Array.prototype.slice.call(e.target.files), chain = Promise.resolve();
+  fl.forEach(function (f) {
+    chain = chain.then(function () { return readFile(f); }).then(function (txt) {
+      var p = parseJSON(txt);
+      if (!p.items.length) { flog(f.name + ": 発言を読み取れませんでした（0件）"); return; }
+      var had = orderOf[f.name] !== undefined;
+      return saveFile(f.name, p.items).then(function () { flog(f.name + ": " + p.items.length + "件を取り込み" + (had ? "（同名を置き換え）" : "")); });
+    }).catch(function (err) { flog(f.name + ": エラー " + err.message); });
   });
   chain.then(refresh).then(function () { e.target.value = ""; });
 };
-$("paste-go").onclick = function () {
-  var txt = $("paste-text").value;
-  if (!txt.trim()) return;
-  var name = $("paste-name").value.trim() || ("paste_" + stamp());
-  importOne(name, txt)
-    .catch(function (err) { log(name + ": エラー " + err.message); })
-    .then(refresh)
-    .then(function () { $("paste-text").value = ""; $("paste-name").value = ""; });
+$("selall").onclick = function () { metas.forEach(function (f) { checked[f.name] = true; }); dirtyView = true; renderFiles(); updateStat(); };
+$("selnone").onclick = function () { checked = {}; dirtyView = true; renderFiles(); updateStat(); };
+
+/* ---------- 閲覧 ----------
+   発言を150件ずつ、画面の描き直しの合間に並べる（固まらない）。
+   ジャンプ先がまだ描かれていなければ、描画がそこに届くまで待つ。 */
+var viewTok = 0, viewKey = "", viewScroll = 0, heads = [], days = [], keyMap = {}, pending = null, painted = true, rafBusy = false;
+function annotate(msgs, name) {
+  var o = orderOf[name], lastT = 0;
+  msgs.forEach(function (m, i) {
+    var t = timeKey(m.time); if (t === null) t = lastT; else lastT = t;
+    m._t = t; m._f = name; m._seq = i; m._o = o;
+  });
+  return msgs;
+}
+function viewNames() { return override ? [override] : checkedNames(); }
+function renderView(p) {
+  var tok = ++viewTok, names = viewNames(), box = $("viewer");
+  dirtyView = false; viewKey = names.join("\u0002");
+  heads = []; days = []; keyMap = {}; pending = p || null; painted = false;
+  box.innerHTML = "";
+  $("voverride").classList.toggle("hidden", !override);
+  if (override) $("voname").textContent = "一時表示: " + override;
+  if (!names.length) {
+    box.textContent = "ファイルタブで、読むファイルにチェックを入れてください。";
+    $("vinfo").textContent = ""; painted = true; return;
+  }
+  $("vinfo").textContent = "読み込み中…";
+  Promise.all(names.map(function (n) { return getBody(n).then(function (ms) { return annotate(ms, n); }); })).then(function (parts) {
+    if (tok !== viewTok) return;
+    var list = [].concat.apply([], parts);
+    list.sort(cmpMsg);
+    var set = Object.create(null);
+    list.forEach(function (m) { if (m._t) set[ymd(m._t)] = 1; });
+    days = Object.keys(set).sort();
+    if (days.length) { $("vdate").min = days[0]; $("vdate").max = days[days.length - 1]; }
+    return paint(tok, list, names.length > 1);
+  }).catch(function (err) { $("vinfo").textContent = "エラー: " + err.message; });
+}
+function paint(tok, list, multi) {
+  var box = $("viewer"), i = 0, lastDay = null;
+  function status() {
+    $("vinfo").textContent = list.length.toLocaleString() + "件 / " + days.length + "日分" +
+      (i < list.length ? "　描画中 " + i.toLocaleString() + "/" + list.length.toLocaleString() : "");
+  }
+  function step() {
+    if (tok !== viewTok) return;
+    var frag = document.createDocumentFragment(), end = Math.min(i + CHUNK, list.length);
+    for (; i < end; i++) {
+      var m = list[i], day = ymd(m._t);
+      if (day !== lastDay) {
+        lastDay = day;
+        if (day) { var h = mk("div", "dayhead", dayLabel(day)); h.setAttribute("data-d", day); heads.push(h); frag.appendChild(h); }
+        else frag.appendChild(mk("div", "dayhead", "日付なし"));
+      }
+      var e = mk("div", "msg crew-" + (m.crew || "unknown"));
+      e.appendChild(mk("div", "meta", m.time + "　" + m.sender + (m.crew && m.crew !== "captain" ? "（" + m.crew + "）" : "") + (multi ? "　[" + m._f + "]" : "")));
+      e.appendChild(mk("div", "body", m.text));
+      if (m.queries) e.appendChild(mk("div", "qs", "🔎 " + m.queries.join(" ／ ")));
+      keyMap[m._f + "\u0001" + m._seq] = e;
+      frag.appendChild(e);
+    }
+    box.appendChild(frag);
+    if (i >= list.length) painted = true;
+    status(); checkPending();
+    if (i < list.length) return nextFrame().then(step);
+  }
+  return nextFrame().then(step);
+}
+function checkPending() {
+  if (!pending) return;
+  var v = $("viewer"), p = pending, el = null, k;
+  if (p.end) {
+    if (painted) { pending = null; v.scrollTop = v.scrollHeight; updateCur(); }
+    return;
+  }
+  if (p.msg) el = keyMap[p.msg];
+  else if (p.day) {
+    for (k = 0; k < heads.length; k++) { if (heads[k].getAttribute("data-d") >= p.day) { el = heads[k]; break; } }
+    if (!el && painted && heads.length) el = heads[heads.length - 1];
+  }
+  if (!el) { if (painted) pending = null; return; }
+  pending = null;
+  v.scrollTop = Math.max(0, el.offsetTop - (p.msg ? 8 : 0));
+  if (p.msg) { el.classList.add("flash"); setTimeout(function () { el.classList.remove("flash"); }, 2500); }
+  updateCur();
+}
+function curHead() {
+  var top = $("viewer").scrollTop + 8, lo = 0, hi = heads.length - 1, ans = 0;
+  while (lo <= hi) {
+    var mid = (lo + hi) >> 1;
+    if (heads[mid].offsetTop <= top) { ans = mid; lo = mid + 1; } else hi = mid - 1;
+  }
+  return ans;
+}
+function updateCur() { if (heads.length) $("vdate").value = heads[curHead()].getAttribute("data-d"); }
+function moveDay(delta) {
+  if (!heads.length) return;
+  var i = days.indexOf(heads[curHead()].getAttribute("data-d")) + delta;
+  i = Math.max(0, Math.min(days.length - 1, i));
+  pending = { day: days[i] }; checkPending();
+}
+function ensureView(p) {
+  var key = viewNames().join("\u0002");
+  if (dirtyView || key !== viewKey) { renderView(p); return; }
+  if (p) { pending = p; checkPending(); }
+  else $("viewer").scrollTop = viewScroll;
+}
+$("vdate").onchange = function () {
+  if (!this.value || !days.length) return;
+  var t = days[days.length - 1];
+  for (var i = 0; i < days.length; i++) { if (days[i] >= this.value) { t = days[i]; break; } }
+  pending = { day: t }; checkPending();
 };
-$("export").onclick = function () {
-  var msgs = all.map(function (r) { return { src: r.src, seq: r.seq, sender: r.sender, time: r.time, t: r.t, text: r.text }; });
-  downloadText("alexandria_backup_" + stamp() + ".json",
-    JSON.stringify({ app: "alexandria", ver: VERSION, msgs: msgs }), "application/json");
-};
-$("clear").onclick = function () {
-  if (!confirm("このアプリの全データを消去しますか？（元のログファイルは消えません）")) return;
-  clearAll().then(refresh);
-};
+$("vprev").onclick = function () { moveDay(-1); };
+$("vnext").onclick = function () { moveDay(1); };
+$("vtop").onclick = function () { pending = null; $("viewer").scrollTop = 0; updateCur(); };
+$("vend").onclick = function () { pending = { end: true }; checkPending(); };
+$("viewer").addEventListener("scroll", function () {
+  if (rafBusy) return; rafBusy = true;
+  requestAnimationFrame(function () { rafBusy = false; updateCur(); });
+});
+$("voback").onclick = function () { override = null; renderView(); };
+
+/* ---------- 検索 ----------
+   対象ファイルを1ファイルずつ読み、走査し、合間に画面へ制御を返す。 */
+var searchTok = 0;
+function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+function appendHL(parent, text, re) {
+  text.split(re).forEach(function (p, i) {
+    if (i % 2 === 1) parent.appendChild(mk("mark", "", p));
+    else if (p) parent.appendChild(document.createTextNode(p));
+  });
+}
+function matchMsg(m, terms, withQ) {
+  var s = m.text.toLowerCase();
+  if (withQ && m.queries) s += "\n" + m.queries.join(" ").toLowerCase();
+  for (var i = 0; i < terms.length; i++) { if (s.indexOf(terms[i]) < 0) return false; }
+  return true;
+}
+function doSearch() {
+  var q = $("q").value.trim(); if (!q) return;
+  var tok = ++searchTok, withQ = $("qinc").checked, hits = [], i = 0;
+  var terms = q.toLowerCase().split(/[\s\u3000]+/).filter(Boolean);
+  var re = new RegExp("(" + terms.map(esc).join("|") + ")", "gi");
+  var names = checkedNames(), scope = names.length ? names.length + "ファイル" : "全ファイル";
+  if (!names.length) names = metas.map(function (f) { return f.name; });
+  $("results").innerHTML = "";
+  function next() {
+    if (tok !== searchTok) return;
+    if (i >= names.length) return show();
+    $("hitcount").textContent = "検索中 " + i + "/" + names.length + "ファイル　ヒット " + hits.length + "件";
+    var name = names[i++];
+    return getBody(name).then(function (msgs) {
+      annotate(msgs, name).forEach(function (m) { if (matchMsg(m, terms, withQ)) hits.push(m); });
+      return tick().then(next);
+    });
+  }
+  function show() {
+    hits.sort(cmpMsg);
+    if ($("desc").checked) hits.reverse();
+    $("hitcount").textContent = hits.length.toLocaleString() + "件（対象: " + scope + "）" + (hits.length > LIMIT ? "　先頭 " + LIMIT + "件を表示。語を足すと絞れます" : "");
+    var box = $("results");
+    hits.slice(0, LIMIT).forEach(function (m) {
+      var d = mk("div", "hit");
+      d.appendChild(mk("div", "meta", m.time + "　" + m.sender + (m.crew && m.crew !== "captain" ? "（" + m.crew + "）" : "") + "　[" + m._f + "]"));
+      var sn = mk("div", "snip"), low = m.text.toLowerCase(), idx = low.indexOf(terms[0]); if (idx < 0) idx = 0;
+      var s = Math.max(0, idx - 40), e = Math.min(m.text.length, idx + terms[0].length + 80);
+      appendHL(sn, (s > 0 ? "…" : "") + m.text.slice(s, e) + (e < m.text.length ? "…" : ""), re);
+      d.appendChild(sn);
+      if (m.queries) {
+        var qs = mk("div", "qs"); qs.appendChild(document.createTextNode("🔎 "));
+        if (withQ) appendHL(qs, m.queries.join(" ／ "), re); else qs.appendChild(document.createTextNode(m.queries.join(" ／ ")));
+        d.appendChild(qs);
+      }
+      d.onclick = function () { openFromSearch(m); };
+      box.appendChild(d);
+    });
+  }
+  next().catch(function (err) { $("hitcount").textContent = "エラー: " + err.message; });
+}
+function openFromSearch(m) {
+  override = checked[m._f] ? null : m._f;   // チェック内なら今の選択のまま、外なら一時表示
+  showTab("view");
+  ensureView({ msg: m._f + "\u0001" + m._seq });
+}
+$("go").onclick = doSearch;
+$("q").addEventListener("keydown", function (e) { if (e.key === "Enter") doSearch(); });
+
+/* ---------- タブ ---------- */
+function showTab(name) {
+  if (curTab === "view") viewScroll = $("viewer").scrollTop;
+  curTab = name;
+  Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === name); });
+  ["view", "search", "files", "make"].forEach(function (t) { $("tab-" + t).classList.toggle("hidden", t !== name); });
+}
+Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) {
+  b.onclick = function () { var n = b.getAttribute("data-tab"); showTab(n); if (n === "view") ensureView(); };
+});
 
 /* ---------- 起動 ---------- */
-if (!window.indexedDB) {
-  $("stat").textContent = "IndexedDBが使えません";
-} else {
+if (!window.indexedDB) { $("stat").textContent = "IndexedDBが使えません"; }
+else {
   openDB().then(function (d) {
     db = d;
     if (navigator.storage && navigator.storage.persist) { navigator.storage.persist().catch(function () {}); }
     return refresh();
-  }).catch(function (err) { $("stat").textContent = "起動エラー: " + err.message; });
+  }).then(function () { if (!metas.length) showTab("files"); })
+    .catch(function (err) { $("stat").textContent = "起動エラー: " + err.message; });
 }
 })();
 </script>
