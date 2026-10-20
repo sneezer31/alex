@@ -116,14 +116,15 @@ mark { background: #f1c40f; padding: 0 2px; border-radius: 2px; color: #2c3e50; 
       <span id="ovname"></span>
       <button class="btn" id="ovback">チェックの選択に戻る</button>
     </div>
-    <div class="row" id="selbar">
+       <div class="row" id="selbar">
       <span id="selinfo"></span>
       <button class="btn" id="bcopy">コピー</button>
+      <!-- ★ここに追加！ -->
+      <button class="btn" id="bsendmemo" style="background:#8e44ad;">工房へ送る</button>
       <button class="btn red" id="bdel">削除 (DB連動)</button>
       <button class="btn gray" id="bclr">選択解除</button>
       <span id="selmsg"></span>
     </div>
-  </div>
   <div id="viewer"></div>
 </section>
 
@@ -597,6 +598,27 @@ $("bcopy").onclick = async () => {
   const items = [...sel.values()].sort(cmpW);
   if (!items.length) return;
   selMsg((await copyText(items.map(fmtMsg).join("\n\n"))) ? `${items.length}件をコピーしました。メモ工房へ貼り付けてください。` : "コピー失敗");
+};
+  $("bsendmemo").onclick = () => {
+  const items = [...sel.values()].sort(cmpW);
+  if (!items.length) return;
+  
+  const appendText = items.map(fmtMsg).join("\n\n");
+  
+  // メモが一つもない場合は新規作成
+  if (memoArray.length === 0) {
+      memoArray.push(appendText);
+      activeMemoIndex = 0;
+  } else {
+      if (activeMemoIndex < 0) activeMemoIndex = 0;
+      // 現在のメモの末尾に追記
+      memoArray[activeMemoIndex] = memoArray[activeMemoIndex] + (memoArray[activeMemoIndex] ? "\n\n---\n\n" : "") + appendText;
+  }
+  
+  saveMemosToStorage();
+  renderMemoDial();
+  selMsg(`工房のメモに${items.length}件の歴史を転送しました`);
+  $("bclr").click(); // 転送後にチェックを自動解除
 };
 $("bclr").onclick = () => {
   sel.clear(); updateSel();
