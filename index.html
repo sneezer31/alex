@@ -1,629 +1,291 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>アレクサンドリア</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
-body { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; font: 15px/1.5 sans-serif; background: #f4f4f5; color: #333; }
-header { flex: none; background: #2c3e50; color: #fff; padding: 8px 12px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-weight: bold; }
-header small { font-weight: normal; opacity: .75; font-size: 12px; }
-#stat { margin-left: auto; font-weight: normal; font-size: 12px; opacity: .9; }
-#err { flex: none; background: #c0392b; color: #fff; padding: 6px 12px; font-size: 12px; white-space: pre-wrap; }
-nav { flex: none; display: flex; background: #34495e; }
-nav button { flex: 1; padding: 12px 4px; border: 0; background: none; color: #bdc3c7; font-size: 15px; font-weight: bold; }
-nav button.on { color: #fff; background: #2980b9; }
-.tab { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; }
-.hidden { display: none !important; }
-.row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
-input[type=search], input[type=date], select { padding: 9px; border: 1px solid #95a5a6; border-radius: 5px; font-size: 15px; background: #fff; }
-input[type=search] { flex: 1; min-width: 160px; }
-.btn { padding: 9px 14px; border: 0; border-radius: 5px; background: #2980b9; color: #fff; font-size: 14px; font-weight: bold; }
-.btn.gray { background: #7f8c8d; }
-.btn.red { background: #c0392b; }
-.btn:disabled { opacity: .4; }
-.note { font-size: 13px; color: #555; margin: 6px 0 10px; line-height: 1.6; }
-h3 { margin: 16px 0 6px; font-size: 16px; }
-pre.log { background: #2c3e50; color: #ecf0f1; padding: 10px; border-radius: 5px; margin: 8px 0; white-space: pre-wrap; font-size: 12px; }
-pre.log:empty { display: none; }
-#total { font-size: 13px; color: #555; margin: 6px 0; white-space: pre-wrap; }
-.frow { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin: 6px 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.frow input[type=checkbox] { width: 22px; height: 22px; flex: none; }
-.frow .info { flex: 1; min-width: 150px; font-size: 13px; line-height: 1.5; word-break: break-all; white-space: pre-wrap; }
-#tab-view { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
-#vbar { flex: none; padding: 8px 12px; background: #ecf0f1; border-bottom: 1px solid #bdc3c7; }
-#vinfo { font-size: 12px; color: #555; margin-bottom: 6px; min-height: 16px; }
-#selbar, #ovbar { margin-bottom: 0; }
-#ovbar { margin-bottom: 6px; font-size: 12px; }
-#selinfo { font-size: 13px; font-weight: bold; }
-#selmsg { font-size: 12px; color: #27ae60; }
-#viewer { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; position: relative; background: #fff; }
-.dayhead { margin: 18px 0 8px; padding: 6px 10px; background: #2c3e50; color: #fff; border-radius: 4px; font-weight: bold; font-size: 13px; }
-.msg { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; margin: 6px 0; border-radius: 5px; background: #f7f9fb; border-left: 4px solid #95a5a6; }
-.msg.c-captain { border-left-color: #2980b9; }
-.msg.c-kanae { border-left-color: #e67e22; }
-.msg.c-shiori { border-left-color: #27ae60; }
-.msg.flash { background: #fff3cd; }
-.mcb { width: 22px; height: 22px; flex: none; margin-top: 2px; }
-.main { flex: 1; min-width: 0; }
-.meta { font-size: 12px; color: #777; margin-bottom: 4px; }
-.body { white-space: pre-wrap; line-height: 1.7; word-break: break-all; }
-.hit { background: #fff; border: 1px solid #dfe4ea; border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer; }
-.snip { white-space: pre-wrap; line-height: 1.6; word-break: break-all; }
-mark { background: #ffe58f; padding: 0 1px; }
-#hitcount { margin: 6px 0; font-size: 13px; color: #555; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大図書館 アレキサンドリア</title>
+    <style>
+        /* ==========================================
+           1. 基本レイアウトとUIの美学（吹き出し排除）
+        ========================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Yu Mincho", "MS PMincho", "Hiragino Mincho ProN", serif; background-color: #f4f4f5; color: #2c3e50; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* コントロールヘッダー */
+        header { background-color: #34495e; color: #ecf0f1; padding: 12px 20px; flex: none; display: flex; gap: 15px; align-items: center; font-family: sans-serif; flex-wrap: wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
+        .control-group { display: flex; gap: 8px; align-items: center; }
+        input[type="file"] { font-size: 12px; max-width: 200px; color: #bdc3c7; }
+        input[type="text"], input[type="date"] { padding: 6px; font-size: 14px; border: 1px solid #7f8c8d; border-radius: 4px; background: #ecf0f1; color: #2c3e50; outline: none; }
+        button { padding: 6px 12px; font-size: 13px; font-weight: bold; color: #fff; background-color: #2980b9; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+        button:hover { background-color: #3498db; }
+        button.btn-danger { background-color: #c0392b; }
+        .header-title { font-size: 16px; font-weight: bold; letter-spacing: 2px; color: #f1c40f; margin-right: auto; }
+
+        /* 読書領域（ビューア） */
+        #viewer { flex: 1; overflow-y: auto; padding: 30px 10%; background-color: #fafafa; }
+        
+        /* 戯曲・ドキュメント形式のターンスタイル */
+        .log-turn { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px dashed #bdc3c7; }
+        .log-meta { font-family: sans-serif; font-size: 12px; color: #7f8c8d; margin-bottom: 10px; display: flex; gap: 10px; align-items: center; }
+        .sender-name { font-weight: bold; font-size: 15px; letter-spacing: 1px; }
+        .sender-user { color: #2980b9; }
+        .sender-ai { color: #27ae60; }
+        
+        /* 検索ワードと本文の描画 */
+        .search-word { font-family: sans-serif; font-size: 12px; color: #8e44ad; font-weight: bold; margin-bottom: 10px; background: #f4f4f5; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+        .log-text { font-size: 16px; line-height: 1.8; padding-left: 1.5em; white-space: pre-wrap; word-wrap: break-word; }
+        mark { background-color: #f1c40f; padding: 0 4px; font-weight: bold; border-radius: 2px; color: #2c3e50; }
+        
+        .empty-state { text-align: center; color: #95a5a6; font-family: sans-serif; margin-top: 50px; font-size: 14px; line-height: 1.6; }
+    </style>
 </head>
 <body>
-<header><span>アレクサンドリア</span><small>版 20261018-4</small><span id="stat"></span></header>
-<div id="err" class="hidden"></div>
-<nav>
-  <button data-tab="view" class="on">閲覧</button>
-  <button data-tab="search">検索</button>
-  <button data-tab="vault">格納庫</button>
-</nav>
+    <header>
+        <div class="header-title">🏛️ アレキサンドリア</div>
+        <div class="control-group">
+            <input type="file" id="import-files" multiple accept=".json" title="複数のJSONをまとめて取り出し">
+            <button id="btn-import">DBへ取り出し</button>
+        </div>
+        <div class="control-group">
+            <input type="date" id="calendar-input" title="日付でジャンプ">
+        </div>
+        <div class="control-group">
+            <input type="text" id="search-input" placeholder="全文検索...">
+            <button id="btn-search">検索 / 絞り込み</button>
+        </div>
+        <button id="btn-clear-db" class="btn-danger" style="margin-left: auto;">DB全消去</button>
+    </header>
 
-<section id="tab-view" class="tab">
-  <div id="vbar">
-    <div class="row">
-      <input type="date" id="vdate">
-      <button class="btn gray" id="vprev">◀ 前の日</button>
-      <button class="btn gray" id="vnext">次の日 ▶</button>
-      <button class="btn gray" id="vtop">先頭</button>
-      <button class="btn gray" id="vend">末尾</button>
+    <div id="viewer">
+        <div class="empty-state">
+            巨大な歴史のJSONファイルをDBに取り出してください。<br>
+            （thinkingは自動で排除され、純粋な対話のみが描画されます）
+        </div>
     </div>
-    <div id="vinfo"></div>
-    <div class="row hidden" id="ovbar">
-      <span id="ovname"></span>
-      <button class="btn" id="ovback">チェックの選択に戻る</button>
-    </div>
-    <div class="row" id="selbar">
-      <span id="selinfo"></span>
-      <button class="btn" id="bcopy">コピー</button>
-      <button class="btn red" id="bdel">削除</button>
-      <button class="btn gray" id="bclr">選択解除</button>
-      <span id="selmsg"></span>
-    </div>
-  </div>
-  <div id="viewer"></div>
-</section>
 
-<section id="tab-search" class="tab hidden">
-  <div class="row">
-    <input id="q" type="search" placeholder="語（空白区切りでAND）">
-    <button class="btn" id="go">検索</button>
-  </div>
-  <div class="row"><label><input type="checkbox" id="desc"> 新しい順</label></div>
-  <p class="note">対象は、格納庫でチェックしたファイルです。チェックが0個なら、全部の週ファイルが対象です。</p>
-  <div id="hitcount"></div>
-  <div id="results"></div>
-</section>
+    <script>
+        // ==========================================
+        // 1. IndexedDBの非同期セットアップ
+        // ==========================================
+        const DB_NAME = "AlexandriaDB";
+        const STORE_NAME = "logs";
+        let db;
 
-<section id="tab-vault" class="tab hidden">
-  <p class="note">使い方: ①「大きなファイル」にJSONを入れる（週ファイルも自動でできます）。②一覧で、読みたいものにチェックを入れる。③「閲覧」タブで読む。大きなファイルと週ファイルは、同時にはチェックできません。</p>
-  <div class="row">
-    <label>持ち主（ファイル名が kanae か shiori で始まらないときに使います）
-      <select id="ownerSel"><option value="">未選択</option><option value="kanae">かなえ</option><option value="shiori">栞</option></select>
-    </label>
-  </div>
-  <div class="row">
-    <label>一覧の表示
-      <select id="ownerFilter"><option value="">すべて</option><option value="kanae">かなえ</option><option value="shiori">栞</option></select>
-    </label>
-  </div>
-  <div id="total"></div>
-  <pre class="log" id="log"></pre>
+        const initDB = () => {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = (e) => {
+                    db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        // タイムスタンプを主キーにして重複インポートを物理的に防ぐ
+                        const store = db.createObjectStore(STORE_NAME, { keyPath: "time" });
+                        store.createIndex("sender", "sender", { unique: false });
+                    }
+                };
+                request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+                request.onerror = (e) => { reject(e.target.error); };
+            });
+        };
 
-  <h3>大きなファイル</h3>
-  <p class="note">複数選ぶと、重複を除いて1本にまとめます。入れると、持ち主ごとの週ファイルを自動で作ります。</p>
-  <input type="file" id="inBig" multiple>
-  <div class="row" style="margin-top:8px">
-    <button class="btn gray" id="allBig">表示中を全選択</button>
-    <button class="btn gray" id="noBig">全解除</button>
-  </div>
-  <div id="listBig"></div>
+        // ==========================================
+        // 2. DBへの書き込み（取り出し）と読み出し
+        // ==========================================
+        const upsertLogs = (logArray) => {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, "readwrite");
+                const store = tx.objectStore(STORE_NAME);
+                logArray.forEach(log => {
+                    // 最低限必要なデータ(timeとtext)があるものだけ取り込む
+                    if (log.time && log.text) store.put(log); 
+                });
+                tx.oncomplete = () => resolve();
+                tx.onerror = (e) => reject(e.target.error);
+            });
+        };
 
-  <h3>週ファイル</h3>
-  <p class="note">週ファイルを1つずつ単独で入れるときに使います。同じ名前は置き換えます。</p>
-  <input type="file" id="inWeek" multiple>
-  <div class="row" style="margin-top:8px">
-    <button class="btn gray" id="allWeek">表示中を全選択</button>
-    <button class="btn gray" id="noWeek">全解除</button>
-  </div>
-  <div id="listWeek"></div>
-</section>
+        const getAllLogs = () => {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, "readonly");
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    // 時間順にソート（文字列比較 "2026/10/20(火) 18:12" など）
+                    const sorted = request.result.sort((a, b) => a.time.localeCompare(b.time));
+                    resolve(sorted);
+                };
+                request.onerror = (e) => reject(e.target.error);
+            });
+        };
 
-<script>
-"use strict";
-(() => {
-const DB_NAME = "alexandria4", CHUNK = 150, LIMIT = 300;
-const OWNER_NAME = { kanae: "かなえ", shiori: "栞" };
-const WD = ["日", "月", "火", "水", "木", "金", "土"];
-const $ = id => document.getElementById(id);
-const pad = n => String(n).padStart(2, "0");
-const tick = () => new Promise(r => setTimeout(r, 0));                         // 画面に制御を返す
-const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));   // 次の描き直しまで待つ
-const mk = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-const kindOf = id => id.slice(0, id.indexOf(":"));
-const nameCmp = (a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+        const clearDB = () => {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, "readwrite");
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.clear();
+                request.onsuccess = () => resolve();
+                request.onerror = (e) => reject(e.target.error);
+            });
+        };
 
-function showErr(e) {
-  const b = $("err"); b.textContent = "エラー: " + (e && e.message ? e.message : e) + "（タップで消す）"; b.classList.remove("hidden");
-}
-$("err").onclick = () => $("err").classList.add("hidden");
-window.addEventListener("error", ev => showErr(ev.message));
-window.addEventListener("unhandledrejection", ev => showErr(ev.reason));
+        // ==========================================
+        // 3. UI描画・検索フィルターロジック
+        // ==========================================
+        const viewer = document.getElementById("viewer");
+        let currentLogs = []; // メモリ上のキャッシュ
 
-/* ========== 時刻・週 ========== */
-function timeKey(s) {
-  const m = /(\d{4})[\/.\-](\d{1,2})[\/.\-](\d{1,2})\D+(\d{1,2}):(\d{2})/.exec(s);
-  return m ? Number(m[1]) * 1e8 + Number(m[2]) * 1e6 + Number(m[3]) * 1e4 + Number(m[4]) * 100 + Number(m[5]) : null;
-}
-const ymd = t => (t ? `${Math.floor(t / 1e8)}-${pad(Math.floor(t / 1e6) % 100)}-${pad(Math.floor(t / 1e4) % 100)}` : "");
-function dayLabel(day) {
-  const p = day.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
-  return `${p[0]}/${p[1]}/${p[2]}(${WD[d.getDay()]})`;
-}
-function weekKey(t) {                       // 日曜始まり、0時区切り
-  if (!t) return "undated";
-  const d = new Date(Math.floor(t / 1e8), Math.floor(t / 1e6) % 100 - 1, Math.floor(t / 1e4) % 100);
-  d.setDate(d.getDate() - d.getDay());
-  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
-}
-/* 日時のない発言は、直前の発言の時刻を引き継ぐ。配列に t を付けた {m,i,t} を返す */
-function withTimes(msgs) {
-  let last = 0;
-  return msgs.map((m, i) => { let t = timeKey(m.time); if (t === null) t = last; else last = t; return { m, i, t }; });
-}
-function sortMsgs(msgs) {
-  const k = withTimes(msgs);
-  k.sort((a, b) => a.t - b.t || a.i - b.i);
-  return k.map(x => x.m);
-}
-function uniq(msgs) {
-  const seen = new Set(), out = [];
-  for (const m of msgs) {
-    const k = `${m.time}\u0001${m.sender}\u0001${m.text}`;
-    if (!seen.has(k)) { seen.add(k); out.push(m); }
-  }
-  return out;
-}
-function splitWeeks(msgs) {                 // 並べ終えた配列を、週ごとの Map にする
-  const g = new Map();
-  for (const x of withTimes(msgs)) {
-    const k = weekKey(x.t);
-    if (!g.has(k)) g.set(k, []);
-    g.get(k).push(x.m);
-  }
-  return g;
-}
-function rangeName(msgs) {
-  let f = null, l = null;
-  for (const m of msgs) { const t = timeKey(m.time); if (t !== null) { if (f === null) f = t; l = t; } }
-  const d8 = t => (t ? ymd(t).replace(/-/g, "") : "undated");
-  return `${d8(f)}-${d8(l)}`;
-}
-const nameOf = (sender, owner) => (sender === "船長" ? "船長" : /^ai$/i.test(sender) ? (OWNER_NAME[owner] || "AI") : sender);
-const crewOf = (sender, owner) => (sender === "船長" ? "captain" : /^ai$/i.test(sender) ? owner : "other");
+        const escapeRegExp = (string) => {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        };
 
-/* ========== 読み取り・持ち主 ========== */
-function parseMsgs(text) {
-  const arr = JSON.parse(text.replace(/^\uFEFF/, ""));
-  if (!Array.isArray(arr)) throw new Error("配列ではありません");
-  const msgs = [];
-  for (const x of arr) {
-    if (x && typeof x === "object" && typeof x.text === "string") {
-      msgs.push({ ...x, sender: String(x.sender ?? "?"), time: String(x.time ?? ""), text: x.text });
-    }
-  }
-  return { msgs, skipped: arr.length - msgs.length };
-}
-function ownerOf(fileName) {
-  const m = /^(kanae|shiori)/i.exec(fileName);
-  return m ? m[1].toLowerCase() : $("ownerSel").value;
-}
+        const renderLogs = (logs, highlightQuery = "") => {
+            viewer.innerHTML = "";
+            if (logs.length === 0) {
+                viewer.innerHTML = '<div class="empty-state">表示する歴史がありません。</div>';
+                return;
+            }
 
-/* ========== IndexedDB ==========
-   meta: id・持ち主・件数・期間（軽い。一覧と起動はこれだけ読む）
-   body: 発言の配列（重い。閲覧・検索で必要なファイルだけ読む）
-   id は "big:名前" か "week:名前"。棚は id の頭で分かれる。
-   async 関数の中の await は、結果が返るまでその関数だけが待つ、という意味。画面は止まらない。 */
-let db = null, metas = new Map();
-const reqP = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
-const txP = t => new Promise((res, rej) => { t.oncomplete = () => res(); t.onerror = t.onabort = () => rej(t.error || new Error("DBの書き込みに失敗")); });
-function openDB() {
-  return new Promise((res, rej) => {
-    const r = indexedDB.open(DB_NAME, 1);
-    r.onupgradeneeded = () => { r.result.createObjectStore("meta", { keyPath: "id" }); r.result.createObjectStore("body", { keyPath: "id" }); };
-    r.onsuccess = () => res(r.result);
-    r.onerror = () => rej(r.error);
-  });
-}
-const getAllMeta = () => reqP(db.transaction("meta").objectStore("meta").getAll());
-async function getBody(id) {
-  const r = await reqP(db.transaction("body").objectStore("body").get(id));
-  return r ? r.msgs : [];
-}
-function makeMeta(kind, name, owner, msgs) {
-  let chars = 0, first = null, last = null;
-  for (const m of msgs) { chars += m.text.length; if (timeKey(m.time) !== null) { if (first === null) first = m.time; last = m.time; } }
-  return { id: `${kind}:${name}`, kind, name, owner, n: msgs.length, chars, first, last };
-}
-async function putFiles(list) {              // list: [{kind,name,owner,msgs}]。1回の書き込みにまとめる
-  const t = db.transaction(["meta", "body"], "readwrite");
-  for (const f of list) {
-    const meta = makeMeta(f.kind, f.name, f.owner, f.msgs);
-    t.objectStore("meta").put(meta);
-    t.objectStore("body").put({ id: meta.id, msgs: f.msgs });
-  }
-  await txP(t);
-}
-async function removeFiles(ids) {
-  const t = db.transaction(["meta", "body"], "readwrite");
-  for (const id of ids) { t.objectStore("meta").delete(id); t.objectStore("body").delete(id); }
-  await txP(t);
-}
+            // 検索キーワードのハイライト用正規表現
+            const regex = highlightQuery ? new RegExp(`(${escapeRegExp(highlightQuery)})`, "gi") : null;
 
-/* ========== 格納庫 ========== */
-const checked = new Set();
-let dirtyView = true, override = null, curTab = "view";
-const setLog = lines => { $("log").textContent = lines.join("\n"); };
+            // DOM操作を軽くするためのフラグメント
+            const fragment = document.createDocumentFragment();
 
-function download(name, content) {
-  const url = URL.createObjectURL(new Blob([content], { type: "application/json" }));
-  const a = document.createElement("a"); a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-function updateStat() {
-  let big = 0, week = 0;
-  for (const m of metas.values()) { if (m.kind === "big") big++; else week++; }
-  $("stat").textContent = `大${big} / 週${week} / チェック${checked.size}`;
-}
-async function refresh(p) {
-  const list = await getAllMeta();
-  metas = new Map(list.map(m => [m.id, m]));
-  for (const id of [...checked]) if (!metas.has(id)) checked.delete(id);
-  if (override && !metas.has(override)) override = null;
-  dirtyView = true;
-  renderLists(); updateStat();
-  if (curTab === "view") ensureView(p);
-}
-function afterCheck() { override = null; dirtyView = true; renderLists(); updateStat(); }
-function setChecked(id, on) {
-  if (on) { for (const c of [...checked]) if (kindOf(c) !== kindOf(id)) checked.delete(c); checked.add(id); }
-  else checked.delete(id);
-  afterCheck();
-}
-function visibleMetas(kind) {
-  const f = $("ownerFilter").value;
-  return [...metas.values()].filter(m => m.kind === kind && (!f || m.owner === f)).sort(nameCmp);
-}
-function renderLists() {
-  for (const kind of ["big", "week"]) {
-    const box = $(kind === "big" ? "listBig" : "listWeek"); box.innerHTML = "";
-    const rows = visibleMetas(kind);
-    if (!rows.length) { box.textContent = "なし"; continue; }
-    for (const m of rows) {
-      const row = mk("div", "frow");
-      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = checked.has(m.id);
-      cb.onchange = () => setChecked(m.id, cb.checked);
-      row.appendChild(cb);
-      row.appendChild(mk("div", "info", `${OWNER_NAME[m.owner]}　${m.name}\n${m.n}件　${m.first ? m.first + " ～ " + m.last : "日時なし"}`));
-      const ex = mk("button", "btn gray", "書き出し");
-      ex.onclick = async () => { try { download(`${m.name}.json`, JSON.stringify(await getBody(m.id), null, 2)); } catch (e) { showErr(e); } };
-      const del = mk("button", "btn red", "削除");
-      del.onclick = async () => {
-        if (!confirm(`${m.name} を削除しますか？（元のJSONには触りません）`)) return;
-        try { await removeFiles([m.id]); setLog([`${m.name} を削除しました。`]); await refresh(); } catch (e) { showErr(e); }
-      };
-      row.appendChild(ex); row.appendChild(del); box.appendChild(row);
-    }
-  }
-  const sum = { big: [0, 0, 0], week: [0, 0, 0] };
-  for (const m of metas.values()) { const s = sum[m.kind]; s[0]++; s[1] += m.n; s[2] += m.chars || 0; }
-  $("total").textContent = `大きなファイル ${sum.big[0]}個 / ${sum.big[1].toLocaleString()}件 / ${sum.big[2].toLocaleString()}字\n週ファイル ${sum.week[0]}個 / ${sum.week[1].toLocaleString()}件 / ${sum.week[2].toLocaleString()}字`;
-}
-$("ownerFilter").onchange = renderLists;
-function selectVisible(kind, on) {
-  if (on) { for (const c of [...checked]) if (kindOf(c) !== kind) checked.delete(c); for (const m of visibleMetas(kind)) checked.add(m.id); }
-  else { for (const c of [...checked]) if (kindOf(c) === kind) checked.delete(c); }
-  afterCheck();
-}
-$("allBig").onclick = () => selectVisible("big", true);
-$("noBig").onclick = () => selectVisible("big", false);
-$("allWeek").onclick = () => selectVisible("week", true);
-$("noWeek").onclick = () => selectVisible("week", false);
+            logs.forEach(log => {
+                const div = document.createElement("div");
+                div.className = "log-turn";
+                
+                // カレンダー検索用に日付属性を付与 ("YYYY/MM/DD")
+                const dateMatch = log.time.match(/^\d{4}\/\d{2}\/\d{2}/);
+                if (dateMatch) {
+                    const dateStr = dateMatch[0].replace(/\//g, "-"); // "2026-10-20"
+                    div.setAttribute("data-date", dateStr);
+                }
 
-/* 大きなファイルを入れる: 持ち主ごとに重複を除いて1本にまとめ、週ファイルも自動で作る */
-$("inBig").onchange = async e => {
-  const files = [...e.target.files], logs = [], groups = new Map();
-  setLog(["読み込み中…"]);
-  try {
-    for (const f of files) {
-      const owner = ownerOf(f.name);
-      if (!owner) { logs.push(`${f.name}: 持ち主が決まりません。ファイル名を kanae か shiori で始めるか、上の「持ち主」を選んでください。`); continue; }
-      try {
-        const p = parseMsgs(await f.text());
-        if (!groups.has(owner)) groups.set(owner, { n: 0, msgs: [] });
-        const g = groups.get(owner); g.n++; g.msgs.push(...p.msgs);
-        logs.push(`${f.name}: ${p.msgs.length}件を読みました${p.skipped ? `（読めない${p.skipped}要素は無視）` : ""}`);
-      } catch (err) { logs.push(`${f.name}: エラー ${err.message}`); }
-      await tick();
-    }
-    for (const [owner, g] of groups) {
-      const all = sortMsgs(uniq(g.msgs)), dup = g.msgs.length - all.length;
-      if (!all.length) { logs.push(`${OWNER_NAME[owner]}: 発言が0件でした`); continue; }
-      const bigName = `${owner}_big_${rangeName(all)}`, list = [{ kind: "big", name: bigName, owner, msgs: all }];
-      let replaced = metas.has(`big:${bigName}`) ? 1 : 0, weeks = 0;
-      for (const [wk, ms] of splitWeeks(all)) {
-        const name = `${owner}_week_${wk}`;
-        if (metas.has(`week:${name}`)) replaced++;
-        list.push({ kind: "week", name, owner, msgs: ms }); weeks++;
-      }
-      await putFiles(list);
-      logs.push(`${OWNER_NAME[owner]}: ${g.n}ファイル、重複${dup}件を除き${all.length}件。大きなファイル1個と週ファイル${weeks}個を作りました。${replaced ? `（同名${replaced}個を置き換え。置き換えた週ファイルでは、削除済みの発言が戻ります）` : ""}`);
-    }
-    setLog(logs);
-    await refresh();
-  } catch (err) { showErr(err); }
-  e.target.value = "";
-};
-/* 週ファイルを単独で入れる */
-$("inWeek").onchange = async e => {
-  const files = [...e.target.files], logs = [];
-  setLog(["読み込み中…"]);
-  try {
-    for (const f of files) {
-      const owner = ownerOf(f.name);
-      if (!owner) { logs.push(`${f.name}: 持ち主が決まりません。ファイル名を kanae か shiori で始めるか、上の「持ち主」を選んでください。`); continue; }
-      try {
-        const p = parseMsgs(await f.text());
-        if (!p.msgs.length) { logs.push(`${f.name}: 0件でした`); continue; }
-        const base = f.name.replace(/\.json$/i, "");
-        const name = base.toLowerCase().startsWith(owner) ? base : `${owner}_${base}`;
-        const had = metas.has(`week:${name}`);
-        await putFiles([{ kind: "week", name, owner, msgs: sortMsgs(uniq(p.msgs)) }]);
-        logs.push(`${name}: ${p.msgs.length}件を入れました${had ? "（同名を置き換え）" : ""}`);
-      } catch (err) { logs.push(`${f.name}: エラー ${err.message}`); }
-    }
-    setLog(logs);
-    await refresh();
-  } catch (err) { showErr(err); }
-  e.target.value = "";
-};
+                const isUser = log.sender === "船長";
+                const senderClass = isUser ? "sender-user" : "sender-ai";
 
-/* ========== 閲覧 ==========
-   発言を150件ずつ、画面の描き直しの合間に並べる。ジャンプ先がまだ描かれていなければ、描画が届くまで待つ。 */
-let viewTok = 0, viewKey = "", viewScroll = 0, heads = [], days = [], keyMap = new Map(), pending = null, painted = true, rafBusy = false;
-const sel = new Map();
-const viewIds = () => (override ? [override] : [...checked].sort());
-const cmpW = (a, b) => a.t - b.t || a.o - b.o || a.i - b.i;
-const wKey = w => `${w.f}\u0001${w.i}`;
-const fmtMsg = w => `【${w.m.time}】 ${nameOf(w.m.sender, w.ow)}：\n${w.m.text}`;
+                // メタ情報（名前と時間）
+                let innerHTML = `
+                    <div class="log-meta">
+                        <span class="sender-name ${senderClass}">${log.sender}</span>
+                        <span>${log.time}</span>
+                    </div>
+                `;
 
-async function loadWrapped(id, order) {
-  const meta = metas.get(id), ow = meta ? meta.owner : "";
-  return withTimes(await getBody(id)).map(x => ({ m: x.m, f: id, i: x.i, t: x.t, o: order, ow }));
-}
-async function renderView(p) {
-  const tok = ++viewTok, ids = viewIds(), box = $("viewer");
-  dirtyView = false; viewKey = ids.join("|");
-  heads = []; days = []; keyMap = new Map(); pending = p || null; painted = false;
-  sel.clear(); updateSel(); box.innerHTML = "";
-  $("ovbar").classList.toggle("hidden", !override);
-  if (override) $("ovname").textContent = "一時表示: " + metas.get(override).name;
-  if (!ids.length) { box.textContent = "格納庫タブで、読むファイルにチェックを入れてください。"; $("vinfo").textContent = ""; painted = true; return; }
-  $("vinfo").textContent = "読み込み中…";
-  try {
-    const parts = await Promise.all(ids.map((id, k) => loadWrapped(id, k)));
-    if (tok !== viewTok) return;
-    const list = parts.flat().sort(cmpW);
-    const set = new Set();
-    for (const w of list) if (w.t) set.add(ymd(w.t));
-    days = [...set].sort();
-    if (days.length) { $("vdate").min = days[0]; $("vdate").max = days[days.length - 1]; }
-    await paint(tok, list, ids.length > 1);
-  } catch (err) { $("vinfo").textContent = "エラー: " + err.message; }
-}
-async function paint(tok, list, multi) {
-  const box = $("viewer");
-  let i = 0, lastDay = null;
-  const status = () => { $("vinfo").textContent = `${list.length.toLocaleString()}件 / ${days.length}日分` + (i < list.length ? `　描画中 ${i.toLocaleString()}/${list.length.toLocaleString()}` : ""); };
-  if (!list.length) { painted = true; status(); return; }
-  while (i < list.length) {
-    await nextFrame();                         // 描き直しを1回挟んでから、次の150件を並べる
-    if (tok !== viewTok) return;
-    const frag = document.createDocumentFragment(), end = Math.min(i + CHUNK, list.length);
-    for (; i < end; i++) {
-      const w = list[i], day = ymd(w.t);
-      if (day !== lastDay) {
-        lastDay = day;
-        if (day) { const h = mk("div", "dayhead", dayLabel(day)); h.setAttribute("data-d", day); heads.push(h); frag.appendChild(h); }
-        else frag.appendChild(mk("div", "dayhead", "日付なし"));
-      }
-      const e = mk("div", "msg c-" + crewOf(w.m.sender, w.ow));
-      const cb = document.createElement("input"); cb.type = "checkbox"; cb.className = "mcb";
-      cb.onchange = () => { if (cb.checked) sel.set(wKey(w), w); else sel.delete(wKey(w)); updateSel(); };
-      const main = mk("div", "main");
-      main.appendChild(mk("div", "meta", `${w.m.time}　${nameOf(w.m.sender, w.ow)}` + (multi ? `　[${metas.get(w.f).name}]` : "")));
-      main.appendChild(mk("div", "body", w.m.text));
-      e.appendChild(cb); e.appendChild(main);
-      keyMap.set(wKey(w), e);
-      frag.appendChild(e);
-    }
-    box.appendChild(frag);
-    painted = i >= list.length;
-    status(); checkPending();
-  }
-}
-function checkPending() {
-  if (!pending) return;
-  const v = $("viewer"), p = pending;
-  if (p.end) { if (painted) { pending = null; v.scrollTop = v.scrollHeight; updateCur(); } return; }
-  if (p.top != null) { if (painted || v.scrollHeight >= p.top + v.clientHeight) { pending = null; v.scrollTop = p.top; updateCur(); } return; }
-  let el = null;
-  if (p.msg) el = keyMap.get(p.msg);
-  else if (p.day) {
-    el = heads.find(h => h.getAttribute("data-d") >= p.day) || null;
-    if (!el && painted && heads.length) el = heads[heads.length - 1];
-  }
-  if (!el) { if (painted) pending = null; return; }
-  pending = null;
-  v.scrollTop = Math.max(0, el.offsetTop - (p.msg ? 8 : 0));
-  if (p.msg) { el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 2500); }
-  updateCur();
-}
-function curHead() {
-  const top = $("viewer").scrollTop + 8;
-  let lo = 0, hi = heads.length - 1, ans = 0;
-  while (lo <= hi) { const mid = (lo + hi) >> 1; if (heads[mid].offsetTop <= top) { ans = mid; lo = mid + 1; } else hi = mid - 1; }
-  return ans;
-}
-function updateCur() { if (heads.length) $("vdate").value = heads[curHead()].getAttribute("data-d"); }
-function moveDay(delta) {
-  if (!heads.length) return;
-  const h = heads[curHead()];
-  if (delta < 0 && $("viewer").scrollTop > h.offsetTop + 20) delta = 0;   // 日の途中なら、その日の頭へ
-  let i = days.indexOf(h.getAttribute("data-d")) + delta;
-  i = Math.max(0, Math.min(days.length - 1, i));
-  pending = { day: days[i] }; checkPending();
-}
-function ensureView(p) {
-  if (dirtyView || viewIds().join("|") !== viewKey) return renderView(p);
-  if (p) { pending = p; checkPending(); } else $("viewer").scrollTop = viewScroll;
-}
-$("vdate").onchange = function () {
-  if (!this.value || !days.length) return;
-  pending = { day: days.find(d => d >= this.value) || days[days.length - 1] }; checkPending();
-};
-$("vprev").onclick = () => moveDay(-1);
-$("vnext").onclick = () => moveDay(1);
-$("vtop").onclick = () => { pending = null; $("viewer").scrollTop = 0; updateCur(); };
-$("vend").onclick = () => { pending = { end: true }; checkPending(); };
-$("viewer").addEventListener("scroll", () => {
-  if (rafBusy) return; rafBusy = true;
-  requestAnimationFrame(() => { rafBusy = false; updateCur(); });
-});
-$("ovback").onclick = () => { override = null; renderView(); };
+                // 検索ワードの描画（19号で改修したプロパティ）
+                if (log.search_word) {
+                    let dispSearch = log.search_word;
+                    if (regex) dispSearch = dispSearch.replace(regex, "<mark>$1</mark>");
+                    innerHTML += `<div class="search-word">🔍 検索: ${dispSearch}</div>`;
+                }
 
-/* ---- 発言のコピー・削除 ---- */
-function updateSel() {
-  $("selinfo").textContent = `選択 ${sel.size}件`;
-  for (const id of ["bcopy", "bdel", "bclr"]) $(id).disabled = !sel.size;
-}
-const selMsg = s => { $("selmsg").textContent = s; setTimeout(() => { if ($("selmsg").textContent === s) $("selmsg").textContent = ""; }, 3000); };
-async function copyText(s) {
-  try { await navigator.clipboard.writeText(s); return true; } catch (e) { /* 下の方法へ */ }
-  const ta = document.createElement("textarea"); ta.value = s; ta.style.cssText = "position:fixed;opacity:0";
-  document.body.appendChild(ta); ta.select();
-  let ok = false; try { ok = document.execCommand("copy"); } catch (e) { /* 失敗 */ }
-  ta.remove(); return ok;
-}
-$("bcopy").onclick = async () => {
-  const items = [...sel.values()].sort(cmpW);
-  if (!items.length) return;
-  selMsg((await copyText(items.map(fmtMsg).join("\n\n"))) ? `${items.length}件をコピーしました` : "コピーに失敗しました");
-};
-$("bclr").onclick = () => {
-  sel.clear(); updateSel();
-  for (const cb of document.querySelectorAll("#viewer .mcb")) cb.checked = false;
-};
-$("bdel").onclick = async () => {
-  const items = [...sel.values()];
-  if (!items.length) return;
-  if (!confirm(`${items.length}件を削除しますか？（この格納庫の、いま見ているファイルからだけ消えます。元のJSONには触りません）`)) return;
-  try {
-    const top = $("viewer").scrollTop, byFile = new Map();
-    for (const w of items) { if (!byFile.has(w.f)) byFile.set(w.f, new Set()); byFile.get(w.f).add(w.i); }
-    const list = [];
-    for (const [id, idx] of byFile) {
-      const meta = metas.get(id), msgs = (await getBody(id)).filter((_, i) => !idx.has(i));
-      list.push({ kind: meta.kind, name: meta.name, owner: meta.owner, msgs });
-    }
-    await putFiles(list);
-    await refresh({ top });
-    selMsg(`${items.length}件を削除しました`);
-  } catch (err) { showErr(err); }
-};
+                // 本文の描画（thinkingは完全に無視し、テキストだけを出す）
+                let displayText = log.text;
+                if (regex) displayText = displayText.replace(regex, "<mark>$1</mark>");
+                innerHTML += `<div class="log-text">${displayText}</div>`;
 
-/* ========== 検索 ==========
-   ファイルを1つずつ読み、走査し、合間に画面へ制御を返す。 */
-let searchTok = 0;
-const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-function appendHL(parent, text, re) {
-  text.split(re).forEach((p, i) => {
-    if (i % 2 === 1) parent.appendChild(mk("mark", "", p));
-    else if (p) parent.appendChild(document.createTextNode(p));
-  });
-}
-async function doSearch() {
-  const q = $("q").value.trim(); if (!q) return;
-  const tok = ++searchTok, hits = [];
-  const terms = q.toLowerCase().split(/[\s\u3000]+/).filter(Boolean);
-  const re = new RegExp("(" + terms.map(esc).join("|") + ")", "gi");
-  let ids = [...checked].sort(), scope = `チェック${ids.length}個`;
-  if (!ids.length) { ids = [...metas.values()].filter(m => m.kind === "week").map(m => m.id).sort(); scope = "全部の週ファイル"; }
-  $("results").innerHTML = "";
-  try {
-    for (let k = 0; k < ids.length; k++) {
-      if (tok !== searchTok) return;
-      $("hitcount").textContent = `検索中 ${k}/${ids.length}ファイル　ヒット ${hits.length}件`;
-      for (const w of await loadWrapped(ids[k], k)) {
-        const s = w.m.text.toLowerCase();
-        if (terms.every(t => s.includes(t))) hits.push(w);
-      }
-      await tick();
-    }
-    if (tok !== searchTok) return;
-    hits.sort(cmpW);
-    if ($("desc").checked) hits.reverse();
-    $("hitcount").textContent = `${hits.length.toLocaleString()}件（対象: ${scope}）` + (hits.length > LIMIT ? `　先頭${LIMIT}件を表示。語を足すと絞れます` : "");
-    const box = $("results");
-    for (const w of hits.slice(0, LIMIT)) {
-      const d = mk("div", "hit"), text = w.m.text, low = text.toLowerCase();
-      d.appendChild(mk("div", "meta", `${w.m.time}　${nameOf(w.m.sender, w.ow)}　[${metas.get(w.f).name}]`));
-      let idx = low.indexOf(terms[0]); if (idx < 0) idx = 0;
-      const s = Math.max(0, idx - 40), e = Math.min(text.length, idx + terms[0].length + 80);
-      const sn = mk("div", "snip");
-      appendHL(sn, (s > 0 ? "…" : "") + text.slice(s, e) + (e < text.length ? "…" : ""), re);
-      d.appendChild(sn);
-      d.onclick = () => openFromSearch(w);
-      box.appendChild(d);
-    }
-  } catch (err) { $("hitcount").textContent = "エラー: " + err.message; }
-}
-function openFromSearch(w) {
-  override = checked.has(w.f) ? null : w.f;    // チェック内なら今の選択のまま、外なら一時表示
-  showTab("view");
-  ensureView({ msg: wKey(w) });
-}
-$("go").onclick = doSearch;
-$("q").addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
+                div.innerHTML = innerHTML;
+                fragment.appendChild(div);
+            });
 
-/* ========== タブ・起動 ========== */
-function showTab(name) {
-  if (curTab === "view") viewScroll = $("viewer").scrollTop;
-  curTab = name;
-  for (const b of document.querySelectorAll("nav button")) b.classList.toggle("on", b.dataset.tab === name);
-  for (const t of ["view", "search", "vault"]) $("tab-" + t).classList.toggle("hidden", t !== name);
-}
-for (const b of document.querySelectorAll("nav button")) {
-  b.onclick = () => { showTab(b.dataset.tab); if (b.dataset.tab === "view") ensureView(); };
-}
-updateSel();
-(async () => {
-  if (!window.indexedDB) { $("stat").textContent = "IndexedDBが使えません"; return; }
-  try {
-    db = await openDB();
-    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
-    await refresh();
-    if (!metas.size) showTab("vault");
-  } catch (err) { showErr(err); }
-})();
-})();
-</script>
+            viewer.appendChild(fragment);
+        };
+
+        const loadAndDisplayAll = async () => {
+            currentLogs = await getAllLogs();
+            renderLogs(currentLogs);
+            // 読み込み直後は一番下（最新）へスクロール
+            if(currentLogs.length > 0) {
+                setTimeout(() => { viewer.scrollTop = viewer.scrollHeight; }, 100);
+            }
+        };
+
+        // ==========================================
+        // 4. イベントリスナー（フロントエンドのハッキング）
+        // ==========================================
+
+        // DBへのインポート（複数ファイルの一括取り出し）
+        document.getElementById("btn-import").addEventListener("click", async () => {
+            const files = document.getElementById("import-files").files;
+            if (files.length === 0) return alert("取り出すJSONファイルを選択してください。");
+
+            document.getElementById("btn-import").textContent = "取り出し中...";
+            document.getElementById("btn-import").disabled = true;
+
+            let totalImported = 0;
+            for (let i = 0; i < files.length; i++) {
+                const text = await files[i].text();
+                try {
+                    const json = JSON.parse(text);
+                    await upsertLogs(json);
+                    totalImported += json.length;
+                } catch (e) {
+                    console.error("Parse Error in file " + files[i].name, e);
+                }
+            }
+            
+            document.getElementById("import-files").value = "";
+            document.getElementById("btn-import").textContent = "DBへ取り出し";
+            document.getElementById("btn-import").disabled = false;
+            
+            alert(`${totalImported}ターンの歴史を大図書館に取り出しました！`);
+            loadAndDisplayAll();
+        });
+
+        // DBの全消去
+        document.getElementById("btn-clear-db").addEventListener("click", async () => {
+            if (confirm("大図書館のインデックスを完全に焼き払いますか？（元のJSONファイルは消えません）")) {
+                await clearDB();
+                currentLogs = [];
+                renderLogs(currentLogs);
+            }
+        });
+
+        // テキスト全文検索（超高速メモリフィルタリング）
+        document.getElementById("btn-search").addEventListener("click", () => {
+            const query = document.getElementById("search-input").value.trim();
+            if (!query) return renderLogs(currentLogs);
+
+            // 本文(text)か検索ワード(search_word)に該当するものだけを抽出
+            const filtered = currentLogs.filter(log => 
+                (log.text && log.text.includes(query)) || 
+                (log.search_word && log.search_word.includes(query))
+            );
+            renderLogs(filtered, query);
+        });
+
+        document.getElementById("search-input").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") document.getElementById("btn-search").click();
+        });
+
+        // カレンダー連動ジャンプ（HTML5ネイティブUIのハック）
+        document.getElementById("calendar-input").addEventListener("change", (e) => {
+            const targetDate = e.target.value; // "YYYY-MM-DD"形式
+            if (!targetDate) return;
+
+            // まず全ログを表示状態に戻す（絞り込みを解除）
+            document.getElementById("search-input").value = "";
+            renderLogs(currentLogs);
+
+            // 該当する日付の最初のログ要素を探してシームレスにスクロール
+            setTimeout(() => {
+                const targetElement = document.querySelector(`.log-turn[data-date="${targetDate}"]`);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                    
+                    // 強調アニメーション（フラッシュ効果）
+                    const originalBg = targetElement.style.backgroundColor;
+                    targetElement.style.backgroundColor = "#fff9c4";
+                    targetElement.style.transition = "background-color 2s";
+                    setTimeout(() => { targetElement.style.backgroundColor = originalBg; }, 2000);
+                } else {
+                    alert("その日付の歴史はDBに存在しません。");
+                }
+            }, 100);
+        });
+
+        // 起動時にDBを開いて展開
+        initDB().then(() => loadAndDisplayAll()).catch(e => console.error("DB Init Error:", e));
+    </script>
 </body>
 </html>
