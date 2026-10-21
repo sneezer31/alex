@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- ★ここに追加！ -->
 <link rel="manifest" href="manifest.json">
 <title>アレキサンドリア（大図書館・工房）</title>
 <style>
@@ -63,7 +62,7 @@ h3 { margin: 16px 0 6px; font-size: 15px; color: #2c3e50; }
 .log-row { display: flex; flex-direction: column; font-family: "MS UI Gothic", "Yu Gothic UI", "Meiryo UI", sans-serif; font-size: 16px; line-height: 1.6; padding-bottom: 25px; margin-bottom: 25px; -webkit-user-select: text; user-select: text; transition: background-color 2s; }
 .log-meta { font-size: 12px; color: #737373; margin-bottom: 5px; font-family: sans-serif; display: flex; align-items: center; gap: 5px; -webkit-user-select: none; user-select: none; }
 .log-checkbox { width: 14px; height: 14px; cursor: pointer; }
-.msg-main { padding-left: 19px; } /* チェックボックスの幅(14px) + gap(5px) 分字下げ */
+.msg-main { padding-left: 19px; } 
 
 .search-word { font-family: sans-serif; font-size: 12px; color: #2980b9; font-weight: bold; margin-bottom: 4px; background: #ecf0f1; padding: 4px 8px; border-radius: 4px; display: inline-block; }
 .log-body { white-space: pre-wrap; word-break: break-all; }
@@ -121,7 +120,6 @@ mark { background: #f1c40f; padding: 0 2px; border-radius: 2px; color: #2c3e50; 
        <div class="row" id="selbar">
       <span id="selinfo"></span>
       <button class="btn" id="bcopy">コピー</button>
-      <!-- ★ここに追加！ -->
       <button class="btn" id="bsendmemo" style="background:#8e44ad;">工房へ送る</button>
       <button class="btn red" id="bdel">削除 (DB連動)</button>
       <button class="btn gray" id="bclr">選択解除</button>
@@ -278,7 +276,6 @@ function parseMsgs(text) {
   for (const x of arr) {
     if (x && typeof x === "object" && typeof x.text === "string") {
       let sw = x.search_word || null;
-      // ★ 過去JSONの自動洗浄：thinking内の [検索] {"query":...} を抽出しプロパティへ格上げ
       if (!sw && x.thinking) {
           const match = x.thinking.match(/\[検索\]\s*(\{.*?\})/);
           if (match) {
@@ -286,7 +283,13 @@ function parseMsgs(text) {
               catch(e) { sw = match[1]; }
           }
       }
-      msgs.push({ ...x, sender: String(x.sender ?? "?"), time: String(x.time ?? ""), text: x.text, search_word: sw });
+      // ★究極の防壁（ホワイトリスト方式）
+      msgs.push({ 
+          time: String(x.time ?? ""), 
+          sender: String(x.sender ?? "?"), 
+          text: x.text, 
+          search_word: sw 
+      });
     }
   }
   return { msgs, skipped: arr.length - msgs.length };
@@ -506,7 +509,6 @@ async function paint(tok, list, multi) {
         if (day) { const h = mk("div", "dayhead", dayLabel(day)); h.setAttribute("data-d", day); heads.push(h); frag.appendChild(h); }
       }
       
-      // イフリートの美学に基づくDOM構築
       const e = mk("div", "log-row");
       const metaRow = mk("div", "log-meta");
       const cb = document.createElement("input"); cb.type = "checkbox"; cb.className = "log-checkbox mcb";
@@ -607,20 +609,18 @@ $("bcopy").onclick = async () => {
   
   const appendText = items.map(fmtMsg).join("\n\n");
   
-  // メモが一つもない場合は新規作成
   if (memoArray.length === 0) {
       memoArray.push(appendText);
       activeMemoIndex = 0;
   } else {
       if (activeMemoIndex < 0) activeMemoIndex = 0;
-      // 現在のメモの末尾に追記
       memoArray[activeMemoIndex] = memoArray[activeMemoIndex] + (memoArray[activeMemoIndex] ? "\n\n---\n\n" : "") + appendText;
   }
   
   saveMemosToStorage();
   renderMemoDial();
   selMsg(`工房のメモに${items.length}件の歴史を転送しました`);
-  $("bclr").click(); // 転送後にチェックを自動解除
+  $("bclr").click(); 
 };
 $("bclr").onclick = () => {
   sel.clear(); updateSel();
@@ -740,7 +740,6 @@ $("btn-delete-memo").onclick = () => {
 
 function saveMemosToStorage() { localStorage.setItem(MEMO_VAULT, JSON.stringify(memoArray)); }
 
-// メモ内横断検索
 let memoSearchIndex = -1, lastMemoQuery = "";
 function executeMemoSearch() {
     const query = $("memo-search-input").value;
@@ -796,7 +795,6 @@ updateSel();
 (async () => {
   if (!window.indexedDB) { $("stat").textContent = "IndexedDBが使えません"; return; }
   
-  // メモの復元
   const savedMemos = localStorage.getItem(MEMO_VAULT);
   if (savedMemos) { memoArray = JSON.parse(savedMemos); if(memoArray.length>0) activeMemoIndex=0; }
   
